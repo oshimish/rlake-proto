@@ -37,7 +37,7 @@ jobs:
           push: true
           tags: rlake.azurecr.io/rlake-api:${{ github.sha }}
           file: ./backend/Rlake.Api/Dockerfile
-          context: ./backend/Rlake.Api/
+          context: ./
 
 
   deploy:
