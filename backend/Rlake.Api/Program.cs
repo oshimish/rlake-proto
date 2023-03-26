@@ -14,6 +14,8 @@ namespace Rlake.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddTransient<MqClient>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
