@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { Routes, Route } from "react-router-dom";
 import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import {AzureMap, AzureMapsProvider, IAzureMapOptions} from 'react-azure-maps'
-import {AuthenticationType} from 'azure-maps-control'
+
+import Map from "./components/Map";
 
 import {
   Navbar,
@@ -16,84 +17,86 @@ import {
   Row,
   Col,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  Form,
+  InputGroup
 } from "reactstrap";
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-
-const option: IAzureMapOptions = {
-    authOptions: {
-        authType: AuthenticationType.subscriptionKey,
-        subscriptionKey: process.env.REACT_APP_MAPS_KEY ?? '' // Your subscription key
-    },
-}
-
-
 function App() {
-  const [username, setUsername] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setSelectedFile(file || null);
+  };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const handleUploadClick = () => {
-    console.log("Upload clicked");
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        console.log(response);
+        // Handle the response from the API
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (
-    <AzureMapsProvider>
     <div className="container-fluid">
-      <Navbar color="light" light expand="md">
-        <NavbarBrand href="/" src={logo}>Logo</NavbarBrand>
-        <Nav className="mr-auto" navbar>
+      <Navbar color="light" light expand="md" fixed='top'>
+        <NavbarBrand href="/" src={logo}><img
+          alt="logo"
+          src={logo}
+          style={{
+            height: 40,
+            width: 40
+          }}
+        /></NavbarBrand>
+        <Nav navbar className="me-auto">
           <NavItem>
-            <NavLink href="#">Upload</NavLink>
+            <NavLink href="/">RLake Proto</NavLink>
           </NavItem>
         </Nav>
-        {/* <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-        /> */}
-        <Button color="primary" onClick={handleUploadClick}>
-          Upload
-        </Button>
+        <Form onSubmit={handleSubmit} className="d-flex">
+          <InputGroup>
+            <Input type="file" onChange={handleFileChange} placeholder="file..." />
+            <Button type="submit" color="primary" disabled={!selectedFile}>
+              Upload
+            </Button>
+          </InputGroup>
+        </Form>
       </Navbar>
-      <Row>
-        <Col sm="3">
+      <Row  style={{  paddingTop: 66 }}>
+        <Col sm="3" md="2">
           <ListGroup>
-            <ListGroupItem active>Pinned Items</ListGroupItem>
+            <ListGroupItem active>Items</ListGroupItem>
             <ListGroupItem>Item 1</ListGroupItem>
             <ListGroupItem>Item 2</ListGroupItem>
             <ListGroupItem>Item 3</ListGroupItem>
           </ListGroup>
         </Col>
-        <Col sm="9">
-          <div style={{ height: "100vh", backgroundColor: "#eee" }}>
-            <AzureMap options={option} />
+        <Col sm="9" md="10">
+          <div style={{ height: "calc(100vh - 66px)", backgroundColor: "#eee" }}>
+            <Routes >
+              <Route path="/" element={<Map />}>
+              </Route>
+              <Route path="/*">
+              </Route>
+            </Routes >
           </div>
         </Col>
       </Row>
     </div>
-  </AzureMapsProvider>
   );
 }
 
