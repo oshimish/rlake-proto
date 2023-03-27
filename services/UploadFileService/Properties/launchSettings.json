@@ -1,0 +1,26 @@
+{
+  "profiles": {
+    "project": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "RABBITMQ_CONNECTION": "amqp://guest@localhost:5672"
+      },
+      "dotnetRunMessages": true
+    },
+    "rlake-mq": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "RABBITMQ_CONNECTION": "amqp://dev:Kvz7DWWPZ7vg5wL@rlake-mq.westeurope.cloudapp.azure.com:5672"
+      },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": false,
+      "publishAllPorts": true
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
+}
