@@ -1,4 +1,6 @@
 
+using Microsoft.Extensions.Configuration;
+
 namespace Rlake.Api
 {
     public class Program
@@ -6,9 +8,13 @@ namespace Rlake.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var services = builder.Services;
+            var configuration = builder.Configuration;
+            services.Configure<AzureOptions>(configuration.GetSection("AzureStorage"));
+            services.Configure<RabbitMqOptions>(configuration.GetSection("RabbitMq"));
+            services.Configure<RabbitMqOptions>(configuration);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -17,6 +23,9 @@ namespace Rlake.Api
             builder.Services.AddApplicationInsightsTelemetry();
 
             builder.Services.AddTransient<UploadFileService>();
+
+
+
 
             var app = builder.Build();
 

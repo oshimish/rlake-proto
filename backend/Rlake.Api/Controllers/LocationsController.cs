@@ -1,4 +1,7 @@
 
+using Azure.Storage.Blobs;
+using Rlake.Services;
+
 namespace Rlake.Api.Controllers
 {
     [ApiController]
@@ -46,17 +49,21 @@ namespace Rlake.Api.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
-            // Save the uploaded file to a temporary location
-            string tempFilePath = Path.GetTempFileName();
-            using (var stream = new FileStream(tempFilePath, FileMode.Create))
+            // Check if the file is valid
+            if (file == null || file.Length == 0)
             {
-                await file.CopyToAsync(stream);
+                return BadRequest("Invalid file.");
             }
 
-            // Send a message to RabbitMQ with the temp file path
-            UploadFileService.SendMessageToRabbitMQ(tempFilePath);
 
-            return Ok();
+            // Upload the file
+            using var stream = file.OpenReadStream();
+            var blobPath = await UploadFileService.StoreToDataLake(stream, file);
+
+            // send stream?
+            UploadFileService.SendMessageToRabbitMQ(blobPath);
+
+            return Ok("File uploaded successfully.");
         }
     }
 }

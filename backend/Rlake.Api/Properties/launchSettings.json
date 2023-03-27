@@ -5,7 +5,8 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBITMQ__CONNECTION": "amqp://dev:Kvz7DWWPZ7vg5wL@rlake-mq.westeurope.cloudapp.azure.com:5672"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5175"
