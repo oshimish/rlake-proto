@@ -1,0 +1,55 @@
+name: rabbitmq-node
+version: 1.0.0
+resourceGroup: rlake
+type: Microsoft.App/containerApps
+properties:
+  managedEnvironmentId: /subscriptions/6691fac6-5c18-4f09-83fb-6d29aacda858/resourceGroups/rlake/providers/Microsoft.App/managedEnvironments/managedEnvironment-rlake-8889
+  configuration:
+    activeRevisionsMode: Single
+    secrets:
+      - name: azrpass
+        value: Xd8r7p1jyB70RjXp7lmSfdFo9xBv3eQastLC3dV769+ACRDsynlS
+    ingress:
+      external: true
+      allowInsecure: false
+      targetPort: 5672
+      traffic:
+        - latestRevision: true
+          weight: 100
+      transport: tcp      
+    registries:
+      - passwordSecretRef: azrpass
+        server: rlake.azurecr.io
+        username: rlake
+
+  template:
+    scale:
+      minReplicas: 1
+      maxReplicas: 3      
+    volumes:
+      - name: mnesia
+        storageType: AzureFile
+        storageName: mnesia
+    containers:
+    - name: rabbitmq-node
+      image: rlake.azurecr.io/rabbitmq-cluster:latest
+      env:
+        # - name: RABBITMQ_USE_LONGNAME
+        #   value: true          
+        # - name: RABBITMQ_NODENAME
+        #   value: rabbit@rabbitmq-node
+      resources:
+        cpu: 0.25
+        memory: 0.5Gi
+      ports:
+        - name: amqp
+          port: 5672
+        - name: management
+          port: 15672
+        - name: EPMD 
+          port: 4369 
+        - name: clustering
+          port: 25672 
+      volumeMounts:
+      - mountPath: /var/lib/rabbitmq/mnesia
+        volumeName: mnesia
