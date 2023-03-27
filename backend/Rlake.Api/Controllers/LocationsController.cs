@@ -5,14 +5,14 @@ namespace Rlake.Api.Controllers
     [Route("api/locations")]
     public class LocationsController : ControllerBase
     {
-        public LocationsController(MqClient mqClient,
+        public LocationsController(UploadFileService mqClient,
             ILogger<LocationsController> logger)
         {
-            MqClient = mqClient;
+            UploadFileService = mqClient;
             Logger = logger;
         }
 
-        public MqClient MqClient { get; }
+        public UploadFileService UploadFileService { get; }
         public ILogger<LocationsController> Logger { get; }
 
 
@@ -54,7 +54,7 @@ namespace Rlake.Api.Controllers
             }
 
             // Send a message to RabbitMQ with the temp file path
-            MqClient.SendMessageToRabbitMQ(tempFilePath);
+            UploadFileService.SendMessageToRabbitMQ(tempFilePath);
 
             return Ok();
         }
