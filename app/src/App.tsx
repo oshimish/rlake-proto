@@ -38,7 +38,8 @@ function App() {
       formData.append("file", selectedFile);
 
       try {
-        const response = await fetch("/api/upload", {
+        const basePath = 'https://rlake-api.gentlesky-78f8ea63.westeurope.azurecontainerapps.io';
+        const response = await fetch(basePath + "/api/locations/upload", {
           method: "POST",
           body: formData,
         });

@@ -1,0 +1,37 @@
+name: rlake-api
+version: 1.0.0
+resourceGroup: rlake
+type: Microsoft.App/containerApps
+properties:
+  managedEnvironmentId: /subscriptions/6691fac6-5c18-4f09-83fb-6d29aacda858/resourceGroups/rlake/providers/Microsoft.App/managedEnvironments/managedEnvironment-rlake-8889
+  configuration:
+    activeRevisionsMode: Single
+    secrets:
+      - name: azrpass
+        value: Xd8r7p1jyB70RjXp7lmSfdFo9xBv3eQastLC3dV769+ACRDsynlS
+    ingress:
+      external: true
+      allowInsecure: false
+      targetPort: 80
+      traffic:
+        - latestRevision: true
+          weight: 100
+      #transport: tcp      
+    registries:
+      - passwordSecretRef: azrpass
+        server: rlake.azurecr.io
+        username: rlake
+
+  template:
+    scale:
+      minReplicas: 1
+      maxReplicas: 3      
+    containers:
+    - name: uploadfile
+      image: rlake.azurecr.io/rlake-api:latest
+      env:
+        - name: RABBITMQ_CONNECTION
+          value: amqp://dev:Kvz7DWWPZ7vg5wL@rlake-mq.westeurope.cloudapp.azure.com:5672          
+      resources:
+        cpu: 0.25
+        memory: 0.5Gi
