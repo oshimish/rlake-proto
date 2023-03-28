@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Rlake.Api.Options;
+using System.Diagnostics;
 using System.Text;
 
 namespace Rlake.Api.Services
@@ -28,7 +29,7 @@ namespace Rlake.Api.Services
         public IOptions<RabbitMqOptions> MqOptions { get; }
         public AzureServiceBusClient BusClient { get; }
 
-        public async Task<string> StoreToDataLake(Stream stream, IFormFile file)
+        public async Task<string> Upload(Stream stream, IFormFile file)
         {
             // Create a BlobServiceClient
             var blobServiceClient = new BlobServiceClient(StorageOptions.Value.ConnectionString);
@@ -48,25 +49,35 @@ namespace Rlake.Api.Services
             // Upload the file
             await blobClient.UploadAsync(stream, overwrite: true);
 
+            SendMessageToBus(blobName);
+            SendMessageToRabbitMQ(blobName);
             return blobName;
         }
-
+               
         public void SendMessageToRabbitMQ(string blobName)
         {
-            // Connection and channel setup
-            var factory = new ConnectionFactory() { Uri = MqOptions.Value.Connection };
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
+            try
+            {
+                // Connection and channel setup
+                var factory = new ConnectionFactory() { Uri = MqOptions.Value.Connection };
+                using var connection = factory.CreateConnection();
+                using var channel = connection.CreateModel();
 
-            // Declare the queue
-            string queueName = "file_upload_queue";
-            channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                // Declare the queue
+                string queueName = "file_upload_queue";
+                channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-            // Send the message
-            var body = Encoding.UTF8.GetBytes(blobName);
-            channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+                // Send the message
+                var body = Encoding.UTF8.GetBytes(blobName);
+                channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
 
-            Logger.LogInformation($"Sent to {queueName}");
+                Logger.LogInformation($"Sent to {queueName}");
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "SendMessageToRabbitMQ error");
+                Debug.Fail(e.Message);
+            }
         }
 
         public async void SendMessageToBus(string blobName)

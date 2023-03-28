@@ -58,10 +58,7 @@ namespace Rlake.Api.Controllers
 
             // Upload the file
             using var stream = file.OpenReadStream();
-            var blobPath = await UploadFileService.StoreToDataLake(stream, file);
-
-            UploadFileService.SendMessageToBus(blobPath);
-            UploadFileService.SendMessageToRabbitMQ(blobPath);
+            var blobPath = await UploadFileService.Upload(stream, file);
 
             return Ok("File uploaded successfully.");
         }
