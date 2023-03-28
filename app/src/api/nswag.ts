@@ -22,7 +22,7 @@ export class NswagClient {
      * @param searchText (optional) 
      * @return Success
      */
-    chat(searchText: string | undefined): Promise<SearchResult> {
+    chat(searchText: string | undefined): Promise<SearchResultDto> {
         let url_ = this.baseUrl + "/api/Chat?";
         if (searchText === null)
             throw new Error("The parameter 'searchText' cannot be null.");
@@ -42,14 +42,14 @@ export class NswagClient {
         });
     }
 
-    protected processChat(response: Response): Promise<SearchResult> {
+    protected processChat(response: Response): Promise<SearchResultDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = SearchResult.fromJS(resultData200);
+            result200 = SearchResultDto.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -57,7 +57,136 @@ export class NswagClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<SearchResult>(null as any);
+        return Promise.resolve<SearchResultDto>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    conversationsAll(): Promise<Conversation[]> {
+        let url_ = this.baseUrl + "/api/Chat/conversations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processConversationsAll(_response);
+        });
+    }
+
+    protected processConversationsAll(response: Response): Promise<Conversation[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Conversation.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Conversation[]>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    conversationsGET(id: string): Promise<Conversation> {
+        let url_ = this.baseUrl + "/api/Chat/conversations/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processConversationsGET(_response);
+        });
+    }
+
+    protected processConversationsGET(response: Response): Promise<Conversation> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Conversation.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Conversation>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    conversationsPOST(id: string, body: Post | undefined): Promise<Post> {
+        let url_ = this.baseUrl + "/api/Chat/conversations/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processConversationsPOST(_response);
+        });
+    }
+
+    protected processConversationsPOST(response: Response): Promise<Post> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Post.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Post>(null as any);
     }
 
     /**
@@ -186,12 +315,110 @@ export class NswagClient {
     }
 }
 
+export class Conversation implements IConversation {
+    id!: string;
+    title?: string | undefined;
+    createdAt?: Date;
+    posts?: Post[] | undefined;
+
+    constructor(data?: IConversation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.title = _data["title"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            if (Array.isArray(_data["posts"])) {
+                this.posts = [] as any;
+                for (let item of _data["posts"])
+                    this.posts!.push(Post.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): Conversation {
+        data = typeof data === 'object' ? data : {};
+        let result = new Conversation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        if (Array.isArray(this.posts)) {
+            data["posts"] = [];
+            for (let item of this.posts)
+                data["posts"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IConversation {
+    id: string;
+    title?: string | undefined;
+    createdAt?: Date;
+    posts?: Post[] | undefined;
+}
+
+export class GeoData implements IGeoData {
+    latitude?: number;
+    longitude?: number;
+
+    constructor(data?: IGeoData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.latitude = _data["latitude"];
+            this.longitude = _data["longitude"];
+        }
+    }
+
+    static fromJS(data: any): GeoData {
+        data = typeof data === 'object' ? data : {};
+        let result = new GeoData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["latitude"] = this.latitude;
+        data["longitude"] = this.longitude;
+        return data;
+    }
+}
+
+export interface IGeoData {
+    latitude?: number;
+    longitude?: number;
+}
+
 export class Location implements ILocation {
     id!: string;
-    title!: string;
+    title?: string | undefined;
     point?: string | undefined;
     latitude?: number | undefined;
     longitude?: number | undefined;
+    geoPoint?: GeoData;
+    postId?: string | undefined;
 
     constructor(data?: ILocation) {
         if (data) {
@@ -209,6 +436,8 @@ export class Location implements ILocation {
             this.point = _data["point"];
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
+            this.geoPoint = _data["geoPoint"] ? GeoData.fromJS(_data["geoPoint"]) : <any>undefined;
+            this.postId = _data["postId"];
         }
     }
 
@@ -226,23 +455,87 @@ export class Location implements ILocation {
         data["point"] = this.point;
         data["latitude"] = this.latitude;
         data["longitude"] = this.longitude;
+        data["geoPoint"] = this.geoPoint ? this.geoPoint.toJSON() : <any>undefined;
+        data["postId"] = this.postId;
         return data;
     }
 }
 
 export interface ILocation {
     id: string;
-    title: string;
+    title?: string | undefined;
     point?: string | undefined;
     latitude?: number | undefined;
     longitude?: number | undefined;
+    geoPoint?: GeoData;
+    postId?: string | undefined;
 }
 
-export class SearchResult implements ISearchResult {
+export class Post implements IPost {
+    id!: string;
+    text?: string | undefined;
+    createdAt?: Date;
+    conversationId?: string;
+    locations?: Location[] | undefined;
+
+    constructor(data?: IPost) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.text = _data["text"];
+            this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
+            this.conversationId = _data["conversationId"];
+            if (Array.isArray(_data["locations"])) {
+                this.locations = [] as any;
+                for (let item of _data["locations"])
+                    this.locations!.push(Location.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): Post {
+        data = typeof data === 'object' ? data : {};
+        let result = new Post();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["text"] = this.text;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["conversationId"] = this.conversationId;
+        if (Array.isArray(this.locations)) {
+            data["locations"] = [];
+            for (let item of this.locations)
+                data["locations"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPost {
+    id: string;
+    text?: string | undefined;
+    createdAt?: Date;
+    conversationId?: string;
+    locations?: Location[] | undefined;
+}
+
+export class SearchResultDto implements ISearchResultDto {
     searchText?: string | undefined;
     items!: Location[];
 
-    constructor(data?: ISearchResult) {
+    constructor(data?: ISearchResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -265,9 +558,9 @@ export class SearchResult implements ISearchResult {
         }
     }
 
-    static fromJS(data: any): SearchResult {
+    static fromJS(data: any): SearchResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SearchResult();
+        let result = new SearchResultDto();
         result.init(data);
         return result;
     }
@@ -284,7 +577,7 @@ export class SearchResult implements ISearchResult {
     }
 }
 
-export interface ISearchResult {
+export interface ISearchResultDto {
     searchText?: string | undefined;
     items: Location[];
 }

@@ -23,7 +23,7 @@ import {
   Spinner
 } from "reactstrap";
 import Api from './api/api';
-import { SearchResult } from './api/nswag';
+import { SearchResultDto } from './api';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -52,7 +52,7 @@ function App() {
   };
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState(new SearchResult());
+  const [searchResults, setSearchResults] = useState(new SearchResultDto());
 
   const handleSearchChange = (event : any) => {
     setSearchQuery(event.target.value);

@@ -22,7 +22,7 @@ namespace Rlake.Api.Services
         public AzureServiceBusClient BusClient { get; }
         public ILogger<ChatService> Logger { get; }
 
-        public async Task<SearchResult> Post(string searchText)
+        public async Task<SearchResultDto> Post(string searchText)
         {
             Logger.LogDebug($"Post {searchText}");
 
@@ -41,7 +41,7 @@ namespace Rlake.Api.Services
                 new Location(){ Id = Guid.NewGuid(), Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
                 new Location(){ Id = Guid.NewGuid(), Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
             };
-            return new SearchResult() {
+            return new SearchResultDto() {
                 SearchText = searchText,
                 Items = items
             };

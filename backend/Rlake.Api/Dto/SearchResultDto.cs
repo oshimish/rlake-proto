@@ -1,6 +1,6 @@
 ﻿namespace Rlake.Api.Dto
 {
-    public class SearchResult
+    public class SearchResultDto
     {
         public string SearchText { get; set; }
 

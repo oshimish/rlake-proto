@@ -5,17 +5,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AzureMapsProvider } from 'react-azure-maps'
+import { AppContextProvider } from './appContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AzureMapsProvider>
-        <App />
-      </AzureMapsProvider>
-    </BrowserRouter>
+    <AppContextProvider>
+      <BrowserRouter>
+        <AzureMapsProvider>
+          <App />
+        </AzureMapsProvider>
+      </BrowserRouter>
+    </AppContextProvider>
   </React.StrictMode>
 );
 
