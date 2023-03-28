@@ -32,6 +32,8 @@ namespace Rlake.Api
             builder.Services.AddSwaggerGen();
             builder.Services.AddProblemDetails();
             builder.Services.AddApplicationInsightsTelemetry();
+            services.AddCors();
+
 
             services.AddTransient<UploadFileService>();
             services.AddTransient<ChatService>();
@@ -46,17 +48,21 @@ namespace Rlake.Api
 
             var app = builder.Build();
 
-            //if (app.Environment.IsDevelopment())
-            //{
+            if (!app.Environment.IsProduction())
+            {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            //}
+            }
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseCors(builder => builder
+               .AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

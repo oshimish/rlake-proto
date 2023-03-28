@@ -37,9 +37,9 @@ namespace Rlake.Api.Services
             //var points = await azureMapsApi.GetPointsAsync(relatedGeodata);
 
             List<Location> items = new() {
-                new Location(){ Title = "Point 1", Latitude = 0.1, Longitude = 0.1 },
-                new Location(){ Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
-                new Location(){ Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
+                new Location(){ Id = Guid.NewGuid(), Title = "Point 1", Latitude = 0.1, Longitude = 0.1 },
+                new Location(){ Id = Guid.NewGuid(), Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
+                new Location(){ Id = Guid.NewGuid(), Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
             };
             return new SearchResult() {
                 SearchText = searchText,
