@@ -19,8 +19,11 @@ import {
   ListGroup,
   ListGroupItem,
   Form,
-  InputGroup
+  InputGroup,
+  Spinner
 } from "reactstrap";
+import Api from './api/api';
+import { SearchResult } from './api/nswag';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -34,14 +37,10 @@ function App() {
     event.preventDefault();
 
     if (selectedFile) {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
       try {
-        const basePath = 'https://rlake-api.gentlesky-78f8ea63.westeurope.azurecontainerapps.io';
-        const response = await fetch(basePath + "/api/locations/upload", {
-          method: "POST",
-          body: formData,
+        const response = await Api.upload({
+          fileName: selectedFile.name,
+          data: selectedFile
         });
 
         console.log(response);
@@ -49,6 +48,24 @@ function App() {
       } catch (error) {
         console.error(error);
       }
+    }
+  };
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState(new SearchResult());
+
+  const handleSearchChange = (event : any) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event : any) => {
+    event.preventDefault();
+
+    try {
+      const result = await Api.chat(searchQuery);
+      setSearchResults(result);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -68,6 +85,19 @@ function App() {
             <NavLink href="/">RLake Proto</NavLink>
           </NavItem>
         </Nav>
+        <Form onSubmit={handleSearchSubmit} className="d-flex">
+        <InputGroup>
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <Button type="submit" color="primary">
+            {searchResults.items!.length === 0 ? "Search" : <Spinner size="sm" color="light" />}
+          </Button>
+        </InputGroup>
+      </Form>
         <Form onSubmit={handleSubmit} className="d-flex">
           <InputGroup>
             <Input type="file" onChange={handleFileChange} placeholder="file..." />
@@ -79,12 +109,16 @@ function App() {
       </Navbar>
       <Row  style={{  paddingTop: 66 }}>
         <Col sm="3" md="2">
-          <ListGroup>
-            <ListGroupItem active>Items</ListGroupItem>
-            <ListGroupItem>Item 1</ListGroupItem>
-            <ListGroupItem>Item 2</ListGroupItem>
-            <ListGroupItem>Item 3</ListGroupItem>
-          </ListGroup>
+        <ListGroup>
+          <ListGroupItem active>Items</ListGroupItem>
+          {searchResults.items.map((result : any) => (
+            <ListGroupItem key={result.id} tag="a" href={`/locations/${result.id}`}>
+              {result.title}
+              <br />
+              {result.description}
+            </ListGroupItem>
+          ))}
+        </ListGroup>
         </Col>
         <Col sm="9" md="10">
           <div style={{ height: "calc(100vh - 66px)", backgroundColor: "#eee" }}>

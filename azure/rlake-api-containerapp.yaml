@@ -27,11 +27,15 @@ properties:
       minReplicas: 1
       maxReplicas: 3      
     containers:
-    - name: uploadfile
+    - name: rlake-api
       image: rlake.azurecr.io/rlake-api:latest
       env:
-        - name: RABBITMQ_CONNECTION
-          value: amqp://dev:Kvz7DWWPZ7vg5wL@rlake-mq.westeurope.cloudapp.azure.com:5672          
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development      
+        - name: RABBITMQ__CONNECTION
+          value: amqp://dev:Kvz7DWWPZ7vg5wL@rlake-mq.westeurope.cloudapp.azure.com:5672       
+        - name: AzureStorage__ConnectionString
+          value: DefaultEndpointsProtocol=https;AccountName=rlakelake;AccountKey=jiwU3/pT7uj9O7QZAcD0kJIq4rIoOQftjeqy6tbJr2SWtW6pKwfk5A3K3Vxygv6gYBbOAoLPyVfG+AStEFPYGA==;EndpointSuffix=core.windows.net       
       resources:
         cpu: 0.25
         memory: 0.5Gi

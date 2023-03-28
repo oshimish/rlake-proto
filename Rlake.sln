@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rlake.Data", "backend\Rlake.Data\Rlake.Data.csproj", "{1E716621-2B35-4040-B155-4ECA81C85258}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rlake.Api", "backend\Rlake.Api\Rlake.Api.csproj", "{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rlake.Services", "backend\Rlake.Services\Rlake.Services.csproj", "{61B907CC-5A14-452A-91C6-C5AF543D7506}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rlake.Api", "backend\Rlake.Api\Rlake.Api.csproj", "{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadFileService", "services\UploadFileService\UploadFileService.csproj", "{582AEC47-0B82-485F-8B49-679DE8A088E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UploadFileService", "services\UploadFileService\UploadFileService.csproj", "{582AEC47-0B82-485F-8B49-679DE8A088E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E716621-2B35-4040-B155-4ECA81C85258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E716621-2B35-4040-B155-4ECA81C85258}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E716621-2B35-4040-B155-4ECA81C85258}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E716621-2B35-4040-B155-4ECA81C85258}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61B907CC-5A14-452A-91C6-C5AF543D7506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61B907CC-5A14-452A-91C6-C5AF543D7506}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61B907CC-5A14-452A-91C6-C5AF543D7506}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61B907CC-5A14-452A-91C6-C5AF543D7506}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU

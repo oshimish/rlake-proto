@@ -1,6 +1,6 @@
 
 using Azure.Storage.Blobs;
-using Rlake.Services;
+using Rlake.Api.Services;
 
 namespace Rlake.Api.Controllers
 {
@@ -60,7 +60,7 @@ namespace Rlake.Api.Controllers
             using var stream = file.OpenReadStream();
             var blobPath = await UploadFileService.StoreToDataLake(stream, file);
 
-            // send stream?
+            UploadFileService.SendMessageToBus(blobPath);
             UploadFileService.SendMessageToRabbitMQ(blobPath);
 
             return Ok("File uploaded successfully.");

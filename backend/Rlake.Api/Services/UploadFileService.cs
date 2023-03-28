@@ -4,25 +4,29 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using Rlake.Api.Options;
 using System.Text;
 
-namespace Rlake.Services
+namespace Rlake.Api.Services
 {
+
     public class UploadFileService
     {
         public UploadFileService(ILogger<UploadFileService> logger,
-            IOptions<AzureOptions> storageOptions, 
-            IOptions<RabbitMqOptions> mqOptions, 
-            IConfiguration configuration)
+            IOptions<AzureStorageOptions> storageOptions,
+            IOptions<RabbitMqOptions> mqOptions,
+            AzureServiceBusClient busClient)
         {
             Logger = logger;
             StorageOptions = storageOptions;
             MqOptions = mqOptions;
+            BusClient = busClient;
         }
 
         public ILogger<UploadFileService> Logger { get; }
-        public IOptions<AzureOptions> StorageOptions { get; }
+        public IOptions<AzureStorageOptions> StorageOptions { get; }
         public IOptions<RabbitMqOptions> MqOptions { get; }
+        public AzureServiceBusClient BusClient { get; }
 
         public async Task<string> StoreToDataLake(Stream stream, IFormFile file)
         {
@@ -50,7 +54,7 @@ namespace Rlake.Services
         public void SendMessageToRabbitMQ(string blobName)
         {
             // Connection and channel setup
-            var factory = new ConnectionFactory() { Uri = MqOptions.Value.Connection }; 
+            var factory = new ConnectionFactory() { Uri = MqOptions.Value.Connection };
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
 
@@ -61,6 +65,14 @@ namespace Rlake.Services
             // Send the message
             var body = Encoding.UTF8.GetBytes(blobName);
             channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+
+            Logger.LogInformation($"Sent to {queueName}");
+        }
+
+        public async void SendMessageToBus(string blobName)
+        {
+            string queueName = "file_upload_queue";
+            await BusClient.SendMessageAsync(blobName, queueName);
 
             Logger.LogInformation($"Sent to {queueName}");
         }

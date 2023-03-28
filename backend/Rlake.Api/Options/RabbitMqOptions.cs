@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Rlake.Services
+namespace Rlake.Api.Options
 {
     public class RabbitMqOptions
     {

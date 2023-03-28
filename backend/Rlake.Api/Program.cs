@@ -1,5 +1,9 @@
 
+using Azure.Messaging.ServiceBus;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using OpenAI.GPT3.Extensions;
+using Rlake.Api.Options;
 
 namespace Rlake.Api
 {
@@ -9,10 +13,17 @@ namespace Rlake.Api
         {
             var builder = WebApplication.CreateBuilder(args);
             var services = builder.Services;
-            var configuration = builder.Configuration;
-            services.Configure<AzureOptions>(configuration.GetSection("AzureStorage"));
-            services.Configure<RabbitMqOptions>(configuration.GetSection("RabbitMq"));
-            services.Configure<RabbitMqOptions>(configuration);
+            var Configuration = builder.Configuration;
+            services.Configure<AzureStorageOptions>(Configuration.GetSection("AzureStorage"));
+            services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMq"));
+            services.Configure<AppOptions>(Configuration);
+            services.Configure<ChatOptions>(Configuration.GetSection("Chat"));
+            services.Configure<OpenAiOptions>(Configuration.GetSection("Chat:OpenAi"));
+
+            var options = Configuration.Get<AppOptions>();
+
+            var connectionString = Configuration.GetConnectionString("ServiceBusConnection")!;
+            services.AddSingleton<AzureServiceBusClient>(new AzureServiceBusClient(connectionString));
 
             // Add services to the container.
             builder.Services.AddControllers();
@@ -22,10 +33,16 @@ namespace Rlake.Api
             builder.Services.AddProblemDetails();
             builder.Services.AddApplicationInsightsTelemetry();
 
-            builder.Services.AddTransient<UploadFileService>();
+            services.AddTransient<UploadFileService>();
+            services.AddTransient<ChatService>();
 
+            services.AddDbContext<ApiDbContext>(options =>
+            {
+                //options.UseSqlServer(Configuration.GetConnectionString("Default"));
+                options.UseInMemoryDatabase("default");
+            });
 
-
+            services.AddOpenAIService();
 
             var app = builder.Build();
 
