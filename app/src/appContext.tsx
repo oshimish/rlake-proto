@@ -1,8 +1,8 @@
 import React, { createContext, useState } from 'react';
-import { Conversation, SearchResultDto } from './api';
+import { Conversation, Point, SearchResultDto } from './api';
 
 interface AppState {
-  locations: Location[];
+  points: Point[];
   conversations: Conversation[];
   searchResult: SearchResultDto;
   //mapData: MapData;
@@ -10,30 +10,35 @@ interface AppState {
  
 interface AppContextProps extends WithChildren {
   state: AppState;
-  setState: React.Dispatch<React.SetStateAction<AppState>>;
+  //setState: React.Dispatch<React.SetStateAction<AppState>>;
+  updateState: (newState: Partial<AppState>) => void;
 }
 
 export const AppContext = createContext<AppContextProps>({
   state: {
-    locations: [],
+    points: [],
     conversations: [],
     searchResult: new SearchResultDto({ items:[] }),
     //mapData: {},
   },
-  setState: () => {},
+  //setState: () => {},
+  updateState: () => {},
 });
 
 export const AppContextConsumer = AppContext.Consumer;
 
 export const AppContextProvider: React.FC<WithChildren> = ({ children }) => {
   const [state, setState] = useState<AppState>({
-    locations: [],
+    points: [],
     conversations: [],
     searchResult: new SearchResultDto({ items:[] }),
-    //mapData: {},
   });
 
-  return <AppContext.Provider value={{ state, setState }}>{children}</AppContext.Provider>
+  const updateState = (newState: Partial<AppState>) => {
+    setState((prevState) => ({ ...prevState, ...newState }));
+  };
+
+  return <AppContext.Provider value={{ state, updateState }}>{children}</AppContext.Provider>
 };
 
 export default AppContextProvider;

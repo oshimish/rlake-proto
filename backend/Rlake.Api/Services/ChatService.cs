@@ -26,6 +26,7 @@ namespace Rlake.Api.Services
         {
             Logger.LogDebug($"Post {searchText}");
 
+            //OpenAiService.
 
             // Send request to OpenAI's API
             //var result = await openaiApi.RequestAsync(searchText);
@@ -36,10 +37,10 @@ namespace Rlake.Api.Services
             //// Use Azure Maps API to get the points to show to the user
             //var points = await azureMapsApi.GetPointsAsync(relatedGeodata);
 
-            List<Location> items = new() {
-                new Location(){ Id = Guid.NewGuid(), Title = "Point 1", Latitude = 0.1, Longitude = 0.1 },
-                new Location(){ Id = Guid.NewGuid(), Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
-                new Location(){ Id = Guid.NewGuid(), Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
+            List<Point> items = new() {
+                new Point(){ Id = Guid.NewGuid(), Title = "Point 1", Latitude = 0.1, Longitude = 0.1 },
+                new Point(){ Id = Guid.NewGuid(), Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
+                new Point(){ Id = Guid.NewGuid(), Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
             };
             return new SearchResultDto() {
                 SearchText = searchText,

@@ -30,10 +30,10 @@ namespace Rlake.Api.Data
 
         [JsonIgnore]
         public Conversation Conversation { get; set; }
-        public IList<Location> Locations { get; set; } = new List<Location>();
+        public IList<Point> Locations { get; set; } = new List<Point>();
     }
 
-    public class Location
+    public class Point
     {
         [Required]
         [Key]
@@ -41,7 +41,7 @@ namespace Rlake.Api.Data
 
         public string Title { get; set; } = string.Empty;
 
-        public string? Point { get; set; }
+        public string? GeoRaw { get; set; }
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }

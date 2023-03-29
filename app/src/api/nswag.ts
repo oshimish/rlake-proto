@@ -192,7 +192,7 @@ export class NswagClient {
     /**
      * @return Success
      */
-    locationsAll(): Promise<Location[]> {
+    locationsAll(): Promise<Point[]> {
         let url_ = this.baseUrl + "/api/locations";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -208,7 +208,7 @@ export class NswagClient {
         });
     }
 
-    protected processLocationsAll(response: Response): Promise<Location[]> {
+    protected processLocationsAll(response: Response): Promise<Point[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -218,7 +218,7 @@ export class NswagClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Location.fromJS(item));
+                    result200!.push(Point.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -230,13 +230,13 @@ export class NswagClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Location[]>(null as any);
+        return Promise.resolve<Point[]>(null as any);
     }
 
     /**
      * @return Success
      */
-    locations(id: string): Promise<Location> {
+    locations(id: string): Promise<Point> {
         let url_ = this.baseUrl + "/api/locations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -255,14 +255,14 @@ export class NswagClient {
         });
     }
 
-    protected processLocations(response: Response): Promise<Location> {
+    protected processLocations(response: Response): Promise<Point> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Location.fromJS(resultData200);
+            result200 = Point.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -270,7 +270,7 @@ export class NswagClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Location>(null as any);
+        return Promise.resolve<Point>(null as any);
     }
 
     /**
@@ -411,16 +411,16 @@ export interface IGeoData {
     longitude?: number;
 }
 
-export class Location implements ILocation {
+export class Point implements IPoint {
     id!: string;
     title?: string | undefined;
-    point?: string | undefined;
+    geoRaw?: string | undefined;
     latitude?: number | undefined;
     longitude?: number | undefined;
     geoPoint?: GeoData;
     postId?: string | undefined;
 
-    constructor(data?: ILocation) {
+    constructor(data?: IPoint) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -433,7 +433,7 @@ export class Location implements ILocation {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
-            this.point = _data["point"];
+            this.geoRaw = _data["geoRaw"];
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
             this.geoPoint = _data["geoPoint"] ? GeoData.fromJS(_data["geoPoint"]) : <any>undefined;
@@ -441,9 +441,9 @@ export class Location implements ILocation {
         }
     }
 
-    static fromJS(data: any): Location {
+    static fromJS(data: any): Point {
         data = typeof data === 'object' ? data : {};
-        let result = new Location();
+        let result = new Point();
         result.init(data);
         return result;
     }
@@ -452,7 +452,7 @@ export class Location implements ILocation {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
-        data["point"] = this.point;
+        data["geoRaw"] = this.geoRaw;
         data["latitude"] = this.latitude;
         data["longitude"] = this.longitude;
         data["geoPoint"] = this.geoPoint ? this.geoPoint.toJSON() : <any>undefined;
@@ -461,10 +461,10 @@ export class Location implements ILocation {
     }
 }
 
-export interface ILocation {
+export interface IPoint {
     id: string;
     title?: string | undefined;
-    point?: string | undefined;
+    geoRaw?: string | undefined;
     latitude?: number | undefined;
     longitude?: number | undefined;
     geoPoint?: GeoData;
@@ -476,7 +476,7 @@ export class Post implements IPost {
     text?: string | undefined;
     createdAt?: Date;
     conversationId?: string;
-    locations?: Location[] | undefined;
+    locations?: Point[] | undefined;
 
     constructor(data?: IPost) {
         if (data) {
@@ -496,7 +496,7 @@ export class Post implements IPost {
             if (Array.isArray(_data["locations"])) {
                 this.locations = [] as any;
                 for (let item of _data["locations"])
-                    this.locations!.push(Location.fromJS(item));
+                    this.locations!.push(Point.fromJS(item));
             }
         }
     }
@@ -528,12 +528,12 @@ export interface IPost {
     text?: string | undefined;
     createdAt?: Date;
     conversationId?: string;
-    locations?: Location[] | undefined;
+    locations?: Point[] | undefined;
 }
 
 export class SearchResultDto implements ISearchResultDto {
     searchText?: string | undefined;
-    items!: Location[];
+    items!: Point[];
 
     constructor(data?: ISearchResultDto) {
         if (data) {
@@ -553,7 +553,7 @@ export class SearchResultDto implements ISearchResultDto {
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
-                    this.items!.push(Location.fromJS(item));
+                    this.items!.push(Point.fromJS(item));
             }
         }
     }
@@ -579,7 +579,7 @@ export class SearchResultDto implements ISearchResultDto {
 
 export interface ISearchResultDto {
     searchText?: string | undefined;
-    items: Location[];
+    items: Point[];
 }
 
 export interface FileParameter {

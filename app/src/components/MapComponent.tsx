@@ -1,6 +1,7 @@
 import React from 'react';
 import {AzureMap, IAzureMapOptions} from 'react-azure-maps'
 import {AuthenticationType} from 'azure-maps-control'
+import { useParams } from 'react-router';
 
 const option: IAzureMapOptions = {
     authOptions: {
@@ -11,6 +12,8 @@ const option: IAzureMapOptions = {
 
 
 function Map() {
+    let { id } = useParams();
+    console.log(id);
     return (
         <AzureMap options={option} />
     )

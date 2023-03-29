@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Form, InputGroup, Input, Button } from "reactstrap";
 import Api from "../api/api";
-import { AppContext } from "../appContext";
+import { AppContext } from "../AppContext";
 
 const UploadForm: React.FC = () => {
-    const { state, setState } = useContext(AppContext);
+    const { state, updateState } = useContext(AppContext);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +22,7 @@ const UploadForm: React.FC = () => {
                     data: selectedFile,
                 });
 
-                // setState({
+                // updateState({
                 //     ...state,
                 //     locations: [...state.locations, response.location],
                 //   });

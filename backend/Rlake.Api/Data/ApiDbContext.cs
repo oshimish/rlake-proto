@@ -9,7 +9,7 @@ namespace Rlake.Api.Data
         {
         }
 
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<Point> Locations { get; set; }
 
         public DbSet<Upload> Uploads { get; set; }
     }

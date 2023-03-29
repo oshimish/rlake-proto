@@ -1,32 +1,35 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import {
-  Row,
-  Col,
   ListGroup,
   ListGroupItem
 } from "reactstrap";
-import { AppContext } from '../appContext';
+import { AppContext } from '../AppContext';
 
 
 const ItemsComponent: React.FC = () => {
-    const { state, setState } = useContext(AppContext);
+  const { state, updateState } = useContext(AppContext);
 
+  return (
+    <>
+      <ListGroup>
+        <ListGroupItem active>Conversations</ListGroupItem>
+        {state.searchResult.items.map((result) => (
+          <ListGroupItem key={result.id} tag="a" href={`/chat/${result.id}`}>
+            {result.title}
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+      <ListGroup className='my-2'>
+        <ListGroupItem active>Points</ListGroupItem>
+        {state.points.map((result) => (
+          <ListGroupItem key={result.id} tag="a" href={`/point/${result.id}`}>
+            {result.title}
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+    </>
+  );
+};
 
-    return (
-    
-        <ListGroup>
-          <ListGroupItem active>Conversations</ListGroupItem>
-          {state.searchResult.items.map((result : any) => (
-            <ListGroupItem key={result.id} tag="a" href={`/locations/${result.id}`}>
-              {result.title}
-              <br />
-              {result.description}
-            </ListGroupItem>
-          ))}
-        </ListGroup>
-    );
-  };
-  
-  export default ItemsComponent;
-  
+export default ItemsComponent;

@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Form, InputGroup, Input, Button, Spinner } from "reactstrap";
 import Api from "../api/api";
-import { AppContext } from "../appContext";
+import { AppContext } from "../AppContext";
 
 const SearchForm: React.FC = () => {
-    const { state, setState } = useContext(AppContext);
+    const { state, updateState } = useContext(AppContext);
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSearchChange = (event: any) => {
         setSearchQuery(event.target.value);
@@ -15,18 +16,19 @@ const SearchForm: React.FC = () => {
         event.preventDefault();
 
         try {
+            setLoading(true);
             const result = await Api.chat(searchQuery);
-            setState({
-                ...state,
+            updateState({
                 searchResult: result,
               });
         } catch (error) {
             console.error(error);
         }
+        setLoading(false);
     };
 
     return (
-        <Form onSubmit={handleSearchSubmit} className="d-flex flex-fill me-2">
+        <Form onSubmit={handleSearchSubmit} className="d-flex flex-fill mx-4">
             <InputGroup>
                 <Input
                     type="text"
@@ -35,7 +37,7 @@ const SearchForm: React.FC = () => {
                     onChange={handleSearchChange}
                 />
                 <Button type="submit" color="primary">
-                    {state.searchResult.items.length === 0 ? (
+                    {!loading ? (
                         "Search"
                     ) : (
                         <Spinner size="sm" color="light" />

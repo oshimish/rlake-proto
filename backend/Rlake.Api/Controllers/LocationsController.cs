@@ -20,9 +20,9 @@ namespace Rlake.Api.Controllers
 
 
         [HttpGet()]
-        public IEnumerable<Location> Get()
+        public IEnumerable<Point> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new Location
+            return Enumerable.Range(1, 5).Select(index => new Point
             {
                 Id = Guid.NewGuid(),
                 Title = $"Point {index}"
@@ -31,14 +31,14 @@ namespace Rlake.Api.Controllers
         }
         
         [HttpGet("{id}")]
-        public ActionResult<Location> GetById(Guid id)
+        public ActionResult<Point> GetById(Guid id)
         {
             if (id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var loc = new Location()
+            var loc = new Point()
             {
                 Id = id,
                 Title = $"Item {id}",
