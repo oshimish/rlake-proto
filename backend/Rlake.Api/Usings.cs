@@ -10,3 +10,6 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using Microsoft.Extensions.Logging;
+global using System.Text.Json.Serialization;
+global using System.Text.Json;
+global using AutoMapper;

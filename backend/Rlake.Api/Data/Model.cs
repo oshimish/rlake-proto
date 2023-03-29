@@ -41,10 +41,13 @@ namespace Rlake.Api.Data
 
         public string Title { get; set; } = string.Empty;
 
-        public string? GeoRaw { get; set; }
 
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        public string Reason { get; set; }
+        public string Description { get; set; }
+        public string AdditionalInfo { get; set; }
 
         public Guid? PostId { get; set; }
 

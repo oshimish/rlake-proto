@@ -6,7 +6,7 @@ using Rlake.Api.Services;
 
 namespace Rlake.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/chat")]
     [ApiController]
     public class ChatController : ControllerBase
     {

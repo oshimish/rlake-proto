@@ -1,4 +1,5 @@
 ﻿using OpenAI.GPT3.Extensions;
+using Rlake.Api.Mapper;
 
 namespace Rlake.Api;
 
@@ -30,6 +31,7 @@ public class Startup
         services.AddProblemDetails();
         services.AddApplicationInsightsTelemetry();
         services.AddCors();
+        services.AddAutoMapper(typeof(DtoMapperProfile));
 
         services.AddTransient<UploadFileService>();
         services.AddTransient<ChatService>();
