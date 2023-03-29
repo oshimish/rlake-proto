@@ -2,14 +2,15 @@ import { Routes, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-import Map from "./components/MapComponent";
-import NavbarComponent from "./components/NavbarComponent";
-import ItemsComponent from "./components/ItemsComponent";
-
 import {
   Row,
   Col
 } from "reactstrap";
+
+import Map from "./components/MapComponent";
+import NavbarComponent from "./components/NavbarComponent";
+import ItemsComponent from "./components/ItemsComponent";
+
 import FetchDataComponent from "./components/FetchDataComponent";
 
 function App() {

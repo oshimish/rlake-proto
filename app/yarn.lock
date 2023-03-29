@@ -7840,10 +7840,10 @@ react@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
 
-reactstrap@^9.1.6:
-  version "9.1.7"
-  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-9.1.7.tgz#ac19912889601f02812936fe60188ae789591fb2"
-  integrity sha512-w5/0MLXaCkkqBwpUKD97x5ohZlaxnhd2+TbooCKVAHKgDacVCKulJneL65sdV3L7XOgWTxMF0gsT8AUBFPfK8w==
+reactstrap@9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/reactstrap/-/reactstrap-9.1.0.tgz#500c29ee8d8ac110f0414eedb7ae1e96d768a5f1"
+  integrity sha512-Yrrd5eFVmMYonc1GCyxQzBuIJ3wcpmA3TGGyGfpqaanuSI821rhkmsZDjdo1/l2wfMVqi5XZbmg6DuaJLhu0uQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@popperjs/core" "^2.6.0"
