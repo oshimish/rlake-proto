@@ -6,6 +6,8 @@ import {
     AzureMapFeature,
     IAzureMapsContextProps,
     AzureMapsContext,
+    IAzureMapLayerType,
+    AzureMapLayerProvider,
 } from 'react-azure-maps';
 import { AuthenticationType, data } from 'azure-maps-control';
 import { useParams } from 'react-router';
@@ -20,6 +22,7 @@ const option: IAzureMapOptions = {
     },
 }
 
+const markersLayer: IAzureMapLayerType = 'SymbolLayer';
 
 
 const Map: React.FC = () => {
@@ -31,17 +34,12 @@ const Map: React.FC = () => {
 
     const setMapCenterAndZoom = useCallback(
         (point: data.Position, zoom: number) => {
-            // setMapOptions((prevOptions) => ({
-            //     ...prevOptions,
-            //     center: point,
-            //     zoom,
-            // }));
             if (mapRef) {
                 // Simple Camera options modification
                 mapRef.setCamera({ center: point, zoom });
             }
         },
-        [mapRef, isMapReady],
+        [mapRef],
     )
 
     useEffect(() => {
@@ -59,6 +57,19 @@ const Map: React.FC = () => {
                         console.log('Data on source added', e);
                     },
                 }}>
+                <AzureMapLayerProvider
+                    id="markersLayer"
+                    options={{
+                        iconOptions: {
+                            image: 'pin-round-blue', // You can use other icons from Azure Maps
+                        },
+                        textOptions: {
+                            textField: ['get', 'title'], // Specify the property name that contains the text you want to appear with the symbol
+                            offset: [0, 1.2],
+                        },
+                    }}
+                    type={markersLayer}
+                />
                 {state.points.map((point) => (
                     <AzureMapFeature
                         key={point.id}
