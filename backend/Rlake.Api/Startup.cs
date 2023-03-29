@@ -47,7 +47,7 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
+        if (!env.IsProduction())
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -56,10 +56,11 @@ public class Startup
 
         app.UseHttpsRedirection();
 
-        app.UseCors(builder => builder
+        app.UseCors(builder => builder            
            .AllowAnyOrigin()
            .AllowAnyMethod()
-           .AllowAnyHeader());
+           .AllowAnyHeader()
+           );
 
         app.UseRouting();
         app.UseAuthorization();
