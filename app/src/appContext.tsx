@@ -4,7 +4,7 @@ import { Conversation, SearchResultDto } from './api';
 interface AppState {
   locations: Location[];
   conversations: Conversation[];
-  searchResult: SearchResultDto[];
+  searchResult: SearchResultDto;
   //mapData: MapData;
 }
  
@@ -17,7 +17,7 @@ export const AppContext = createContext<AppContextProps>({
   state: {
     locations: [],
     conversations: [],
-    searchResult: [],
+    searchResult: new SearchResultDto({ items:[] }),
     //mapData: {},
   },
   setState: () => {},
@@ -29,7 +29,7 @@ export const AppContextProvider: React.FC<WithChildren> = ({ children }) => {
   const [state, setState] = useState<AppState>({
     locations: [],
     conversations: [],
-    searchResult: [],
+    searchResult: new SearchResultDto({ items:[] }),
     //mapData: {},
   });
 
