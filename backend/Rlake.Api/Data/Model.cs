@@ -43,10 +43,8 @@ namespace Rlake.Api.Data
 
         public string? GeoRaw { get; set; }
 
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
-
-        public GeoData GeoPoint { get; set; } = new GeoData();
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public Guid? PostId { get; set; }
 
@@ -54,13 +52,6 @@ namespace Rlake.Api.Data
         public Post? Post { get; set; }
     }
 
-
-    [Owned]
-    public class GeoData
-    {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-    }
 
     public class Upload
     {

@@ -1,27 +1,23 @@
 import React, { createContext, useState } from 'react';
-import { Conversation, Point, SearchResultDto } from './api';
+import { Conversation, Point } from './api';
 
 interface AppState {
+  error?: unknown;
   points: Point[];
   conversations: Conversation[];
-  searchResult: SearchResultDto;
-  //mapData: MapData;
 }
  
 interface AppContextProps extends WithChildren {
   state: AppState;
-  //setState: React.Dispatch<React.SetStateAction<AppState>>;
   updateState: (newState: Partial<AppState>) => void;
 }
 
 export const AppContext = createContext<AppContextProps>({
   state: {
+    error: undefined,
     points: [],
-    conversations: [],
-    searchResult: new SearchResultDto({ items:[] }),
-    //mapData: {},
+    conversations: []
   },
-  //setState: () => {},
   updateState: () => {},
 });
 
@@ -31,7 +27,6 @@ export const AppContextProvider: React.FC<WithChildren> = ({ children }) => {
   const [state, setState] = useState<AppState>({
     points: [],
     conversations: [],
-    searchResult: new SearchResultDto({ items:[] }),
   });
 
   const updateState = (newState: Partial<AppState>) => {

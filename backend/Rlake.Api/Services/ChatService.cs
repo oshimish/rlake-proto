@@ -37,10 +37,11 @@ namespace Rlake.Api.Services
             //// Use Azure Maps API to get the points to show to the user
             //var points = await azureMapsApi.GetPointsAsync(relatedGeodata);
 
-            List<Point> items = new() {
-                new Point(){ Id = Guid.NewGuid(), Title = "Point 1", Latitude = 0.1, Longitude = 0.1 },
-                new Point(){ Id = Guid.NewGuid(), Title = "Point 2", Latitude = 0.2, Longitude = 0.1 },
-                new Point(){ Id = Guid.NewGuid(), Title = "Point 3", Latitude = 0.2, Longitude = 0.3 },
+            List<Point> items = new()
+            {
+                new Point() { Id = Guid.NewGuid(), Title = "Golden Gate Bridge", Latitude = 37.8199, Longitude = -122.4783 },
+                new Point() { Id = Guid.NewGuid(), Title = "Statue of Liberty", Latitude = 40.6892, Longitude = -74.0445 },
+                new Point() { Id = Guid.NewGuid(), Title = "Eiffel Tower", Latitude = 48.8584, Longitude = 2.2945 },
             };
             return new SearchResultDto() {
                 SearchText = searchText,

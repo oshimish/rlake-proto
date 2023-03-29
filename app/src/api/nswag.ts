@@ -371,53 +371,12 @@ export interface IConversation {
     posts?: Post[] | undefined;
 }
 
-export class GeoData implements IGeoData {
-    latitude?: number;
-    longitude?: number;
-
-    constructor(data?: IGeoData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.latitude = _data["latitude"];
-            this.longitude = _data["longitude"];
-        }
-    }
-
-    static fromJS(data: any): GeoData {
-        data = typeof data === 'object' ? data : {};
-        let result = new GeoData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["latitude"] = this.latitude;
-        data["longitude"] = this.longitude;
-        return data;
-    }
-}
-
-export interface IGeoData {
-    latitude?: number;
-    longitude?: number;
-}
-
 export class Point implements IPoint {
     id!: string;
     title?: string | undefined;
     geoRaw?: string | undefined;
-    latitude?: number | undefined;
-    longitude?: number | undefined;
-    geoPoint?: GeoData;
+    latitude?: number;
+    longitude?: number;
     postId?: string | undefined;
 
     constructor(data?: IPoint) {
@@ -436,7 +395,6 @@ export class Point implements IPoint {
             this.geoRaw = _data["geoRaw"];
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
-            this.geoPoint = _data["geoPoint"] ? GeoData.fromJS(_data["geoPoint"]) : <any>undefined;
             this.postId = _data["postId"];
         }
     }
@@ -455,7 +413,6 @@ export class Point implements IPoint {
         data["geoRaw"] = this.geoRaw;
         data["latitude"] = this.latitude;
         data["longitude"] = this.longitude;
-        data["geoPoint"] = this.geoPoint ? this.geoPoint.toJSON() : <any>undefined;
         data["postId"] = this.postId;
         return data;
     }
@@ -465,9 +422,8 @@ export interface IPoint {
     id: string;
     title?: string | undefined;
     geoRaw?: string | undefined;
-    latitude?: number | undefined;
-    longitude?: number | undefined;
-    geoPoint?: GeoData;
+    latitude?: number;
+    longitude?: number;
     postId?: string | undefined;
 }
 

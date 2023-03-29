@@ -20,14 +20,13 @@ namespace Rlake.Api.Controllers
 
 
         [HttpGet()]
-        public IEnumerable<Point> Get()
+        public IList<Point> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new Point
+            List<Point> items = new()
             {
-                Id = Guid.NewGuid(),
-                Title = $"Point {index}"
-            })
-            .ToArray();
+                new Point() { Id = Guid.NewGuid(), Title = "Sydney Opera House", Latitude = -33.8568, Longitude = 151.2153 }
+            };
+            return items;
         }
         
         [HttpGet("{id}")]

@@ -19,10 +19,10 @@ const SearchForm: React.FC = () => {
             setLoading(true);
             const result = await Api.chat(searchQuery);
             updateState({
-                searchResult: result,
+                points: result.items,
               });
         } catch (error) {
-            console.error(error);
+            updateState({error});
         }
         setLoading(false);
     };
