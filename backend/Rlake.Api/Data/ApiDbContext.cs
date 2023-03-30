@@ -1,5 +1,7 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Xml;
 
 namespace Rlake.Api.Data
 {
@@ -20,6 +22,15 @@ namespace Rlake.Api.Data
         {
             modelBuilder.Entity<Conversation>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
+
+                //to search later
+                entity.HasIndex(c => c.Title);
+
                 entity.HasMany(e => e.Posts)
                     .WithOne(e => e.Conversation)
                     .HasForeignKey(e => e.ConversationId)
@@ -34,6 +45,12 @@ namespace Rlake.Api.Data
 
             modelBuilder.Entity<Post>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
+
                 entity.HasMany(e => e.Points)
                     .WithOne(e => e.Post)
                     .HasForeignKey(e => e.PostId)
@@ -49,12 +66,26 @@ namespace Rlake.Api.Data
 
             modelBuilder.Entity<Point>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
+
                 entity.Property(t => t.Latitude).HasPrecision(18, 6);
                 entity.Property(t => t.Longitude).HasPrecision(18, 6);
             });
 
             modelBuilder.Entity<Upload>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.HasIndex(c => c.BlobPath);
+
                 entity.Property(c => c.CreatedAt)
                     .HasDefaultValueSql("GetDate()");
             });

@@ -53,8 +53,8 @@ public class Startup
 
         services.AddDbContext<ApiDbContext>(options =>
         {
-            //options.UseSqlServer(Configuration.GetConnectionString("Default"));
-            options.UseInMemoryDatabase("default");
+            options.UseSqlServer(Configuration.GetConnectionString("Default"));
+            //options.UseInMemoryDatabase("default");
         });
 
         services.AddAntiforgery();
