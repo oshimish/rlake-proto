@@ -64,7 +64,7 @@ const Map: React.FC = () => {
                             image: 'pin-round-blue', // You can use other icons from Azure Maps
                         },
                         textOptions: {
-                            textField: ['get', 'title'], // Specify the property name that contains the text you want to appear with the symbol
+                            textField: ['get', 'description'], // Specify the property name that contains the text you want to appear with the symbol
                             offset: [0, 1.2],
                         },
                     }}
@@ -78,6 +78,7 @@ const Map: React.FC = () => {
                         coordinate={new data.Position(point.longitude!, point.latitude!)}
                         properties={{
                             title: point.title,
+                            description: point.description,
                         }}
                     />
                 ))}

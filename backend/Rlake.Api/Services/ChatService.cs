@@ -3,13 +3,6 @@ using OpenAI.GPT3.Interfaces;
 using OpenAI.GPT3.Managers;
 using OpenAI.GPT3.ObjectModels.RequestModels;
 using OpenAI.GPT3.ObjectModels;
-using Rlake.Api.Dto;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Azure;
-using System.Xml;
 
 namespace Rlake.Api.Services
 {
@@ -98,6 +91,10 @@ namespace Rlake.Api.Services
             try
             {                
                 var json = parts[1].Trim();
+
+                //try to find only json part
+                json = json.Substring(json.IndexOf('{'), json.LastIndexOf('}') - json.IndexOf('{') + 1);
+
                 Logger.LogDebug("Deserializing\n {json}", json);
                 if (string.IsNullOrEmpty(json))
                 {
