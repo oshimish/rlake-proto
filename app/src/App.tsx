@@ -15,6 +15,7 @@ import FetchDataComponent from "./components/FetchDataComponent";
 import ErrorAlert from "./components/ErrorAlert";
 import { AppContext } from "./AppContext";
 import ConversationsComponent from "./components/ConversationsComponent";
+import LastConversationsComponent from "./components/LastConversationsComponent";
 
 function App() {
   const { state } = useContext(AppContext);
@@ -27,6 +28,7 @@ function App() {
           <ErrorAlert error={state.error} />
         </Row>
       }
+      <LastConversationsComponent />
       <Row>
         <Col sm="4" md="5" className="px-0" style={{ maxHeight: "calc(100vh - 66px)" }}>
           <ConversationsComponent />
