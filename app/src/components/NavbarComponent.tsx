@@ -11,15 +11,15 @@ import UploadForm from "./UploadForm";
 
 const NavbarComponent: React.FC = () => {
     return (
-        <Navbar color="light" light expand="md">
+        <Navbar color="light" light expand="md" >
             <NavbarBrand href="/" src={logo} className=''>
                 <img alt="logo" src={logo} style={{ height: 40, width: 40 }} />
-                GeoAI
+                ChatGPT Maps
             </NavbarBrand>
 
             <SearchForm />
             <UploadForm />
-        </Navbar>
+        </Navbar >
     );
 };
 

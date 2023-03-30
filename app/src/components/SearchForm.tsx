@@ -19,6 +19,7 @@ const SearchForm: React.FC = () => {
             setLoading(true);
             const result = await Api.start(searchQuery);
             updateState({
+                conversation: result.conversation,
                 points: result.items,
             });
         } catch (error) {
@@ -32,13 +33,13 @@ const SearchForm: React.FC = () => {
             <InputGroup>
                 <Input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Ask ChatGPT about any places..."
                     value={searchQuery}
                     onChange={handleSearchChange}
                 />
                 <Button type="submit" color="primary">
                     {!loading ? (
-                        "Search"
+                        "Ask"
                     ) : (
                         <Spinner size="sm" color="light" />
                     )}

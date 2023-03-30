@@ -82,6 +82,9 @@ const Map: React.FC = () => {
         (point?: Point) => {
             if (point) {
                 setMapCenterAndZoom(new data.Position(point.longitude!, point.latitude!), 7);
+            } else {
+
+                setMapCenterAndZoom(new data.Position(0, 0), 1);
             };
         },
         [setMapCenterAndZoom],
@@ -94,8 +97,8 @@ const Map: React.FC = () => {
 
     useEffect(() => {
         if (!mapRef) return;
-        //mapRef && mapRef.setView('Auto');
-    }, [mapRef])
+        mapRef && mapRef.resize();
+    }, [mapRef, state.heightFix])
 
     return (
         <AzureMap options={mapOptions}
@@ -122,7 +125,7 @@ const Map: React.FC = () => {
                             haloColor: "#000000",
                             haloWidth: 2,
                             size: 26,
-                            color: "#aa0000",
+                            color: "#ef4c4c",
                         },
                     }}
                     type={markersLayer}

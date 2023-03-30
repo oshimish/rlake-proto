@@ -7,6 +7,8 @@ interface AppState {
   points: Point[];
   conversation?: Conversation;
   conversations: Conversation[];
+  heightFix?: number;
+  navFix?: number;
 }
 
 interface AppContextProps extends WithChildren {

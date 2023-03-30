@@ -43,13 +43,16 @@ function AppRoute() {
     }
   }, [conversationId, state.conversations, updateState]);
 
+
+
   return (
-    <Row>
+    <Row >
       <Col sm="4" md="5" className="px-0" style={{ maxHeight: "calc(100vh - 66px)" }}>
         <ConversationsComponent />
       </Col>
       <Col sm="8" md="7" className="px-0">
-        <div style={{ height: "calc(100vh - 66px)", backgroundColor: "#eee" }}>
+        <HistoryComponent />
+        <div style={{ height: `calc(100vh - ${state.heightFix}px)`, backgroundColor: "#eee" }}>
           <Map />
         </div>
       </Col>
@@ -68,7 +71,6 @@ function App() {
           <ErrorAlert error={state.error} />
         </Row>
       }
-      <HistoryComponent />
       <Routes>
         <Route path="/" element={<AppRoute />} />
         <Route path="/:conversationId" element={<AppRoute />} />
