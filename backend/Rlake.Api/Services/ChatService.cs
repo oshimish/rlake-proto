@@ -53,12 +53,15 @@ namespace Rlake.Api.Services
                 {
                     ChatMessage.FromSystem(@"You are a helpful assistant that provides json with places"),
                     //ChatMessage.FromUser(searchText)
-                    ChatMessage.FromUser(@"I want to find places on the map."),
-                    ChatMessage.FromUser(@"I want list 3-7 places."),
-                    ChatMessage.FromUser(@"I want json: " + jsonExample),
-                    ChatMessage.FromUser(@"Please finish response"),
+                    ChatMessage.FromAssistant(@"find places on the map."),
+                    ChatMessage.FromAssistant(@"list 3-7 places."),
+                    ChatMessage.FromAssistant(@"json: " + jsonExample),
+                    ChatMessage.FromAssistant(@"finish response"),
+                    //ChatMessage.FromUser(@"no need translate"),
+                    ChatMessage.FromAssistant(@"anyway and only one json at the end"),
+                    //ChatMessage.FromAssistant(@"answer on last message language"),
                     //ChatMessage.FromAssistant(@"5-20 places with coordinates"),
-                    ChatMessage.FromUser($"My query:  {searchText}")
+                    ChatMessage.FromUser($"{searchText}")
                 },
                 Model = Models.ChatGpt3_5Turbo,                
                 MaxTokens = 1080 // optional
@@ -82,19 +85,24 @@ namespace Rlake.Api.Services
 
         private CompletionResult ExtractPointsFromResponse(string response)
         {
-            var parts = response.Split("```"); // code marker
-            var responseText = parts[0].Trim();
+            var openToken = response.IndexOf('{');
+            // no json
+            if (openToken < 0)
+            {
+                Logger.LogWarning("json not found in result\n {response}", response);
+                return new CompletionResult() { ResponseText = response, RawResponse = response };
+            }
 
-            // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
-            // This will depend on the format of the response from GPT-3
+            var responseText = response.Substring(0, openToken);
+            responseText = responseText.Replace("\n\njson:", "");
             Logger.LogInformation("Response text\n {responseText}", responseText);
             try
             {                
-                var json = parts[1].Trim();
-
                 //try to find only json part
-                json = json.Substring(json.IndexOf('{'), json.LastIndexOf('}') - json.IndexOf('{') + 1);
+                var json = response.Substring(openToken, response.LastIndexOf('}') - openToken + 1);
 
+                // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
+                // This will depend on the format of the response from GPT-3
                 Logger.LogDebug("Deserializing\n {json}", json);
                 if (string.IsNullOrEmpty(json))
                 {
@@ -124,8 +132,10 @@ namespace Rlake.Api.Services
             [JsonPropertyName("locations")]
             public List<Location> Locations { get; set; } = new();
 
+            [JsonIgnore]
             public string? RawResponse { get; set; }
 
+            [JsonIgnore]
             public string? Error { get; set; }
         }
 

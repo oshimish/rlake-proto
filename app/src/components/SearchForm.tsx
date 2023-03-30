@@ -16,10 +16,13 @@ const SearchForm: React.FC = () => {
         event.preventDefault();
 
         try {
+            updateState({ error: null });
             setLoading(true);
             const result = await Api.start(searchQuery);
+            state.conversations.push(result.conversation)
             updateState({
                 conversation: result.conversation,
+                conversations: state.conversations,
                 points: result.items,
             });
         } catch (error) {
@@ -33,7 +36,7 @@ const SearchForm: React.FC = () => {
             <InputGroup>
                 <Input
                     type="text"
-                    placeholder="Ask ChatGPT about any places..."
+                    placeholder="Ask ChatGPT about any places you want"
                     value={searchQuery}
                     onChange={handleSearchChange}
                 />
