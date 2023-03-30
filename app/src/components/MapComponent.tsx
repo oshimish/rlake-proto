@@ -115,12 +115,16 @@ const Map: React.FC = () => {
                     options={{
                         iconOptions: {
                             image: 'pin-red', // You can use other icons from Azure Maps
+                            size: 1.5,
                         },
                         textOptions: {
                             textField: ['get', 'reason'], // Specify the property name that contains the text you want to appear with the symbol
                             offset: [0, 3.8],
-                            size: 22,
-                            color: "#ffffff",
+                            haloBlur: 1,
+                            haloColor: "#000000",
+                            haloWidth: 2,
+                            size: 26,
+                            color: "#ff0000",
                         },
                     }}
                     type={markersLayer}
