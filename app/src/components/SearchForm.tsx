@@ -22,7 +22,7 @@ const SearchForm: React.FC = () => {
                 points: result.items,
             });
         } catch (error) {
-            updateState({ error });
+            updateState({ error: error as any });
         }
         setLoading(false);
     };

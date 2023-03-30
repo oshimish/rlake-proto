@@ -45,7 +45,7 @@ const Map: React.FC = () => {
     useEffect(() => {
         const point = state.points.find(p => p.id === id);
         if (point) {
-            setMapCenterAndZoom(new data.Position(point.longitude!, point.latitude!), 13);
+            setMapCenterAndZoom(new data.Position(point.longitude!, point.latitude!), 7);
         };
     }, [id, state.points, setMapCenterAndZoom])
 
@@ -64,8 +64,8 @@ const Map: React.FC = () => {
                             image: 'pin-round-blue', // You can use other icons from Azure Maps
                         },
                         textOptions: {
-                            textField: ['get', 'description'], // Specify the property name that contains the text you want to appear with the symbol
-                            offset: [0, 1.2],
+                            textField: ['get', 'reason'], // Specify the property name that contains the text you want to appear with the symbol
+                            offset: [0, 3.8],
                         },
                     }}
                     type={markersLayer}
@@ -76,10 +76,7 @@ const Map: React.FC = () => {
                         id={point.id}
                         type="Point"
                         coordinate={new data.Position(point.longitude!, point.latitude!)}
-                        properties={{
-                            title: point.title,
-                            description: point.description,
-                        }}
+                        properties={{ ...point }}
                     />
                 ))}
             </AzureMapDataSourceProvider>

@@ -2,7 +2,7 @@ import React from "react";
 import { Alert } from "reactstrap";
 
 interface ErrorAlertProps {
-  error: Error | null;
+  error?: Error | null;
 }
 
 const ErrorAlert: React.FC<ErrorAlertProps> = ({ error }) => {
@@ -11,7 +11,7 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ error }) => {
   }
 
   return (
-    <Alert color="danger">
+    <Alert color="danger" className="sticky-top"  >
       <h4 className="alert-heading">Error!</h4>
       <p>{error.message}</p>
     </Alert>

@@ -1,23 +1,24 @@
 // FetchDataComponent.tsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import Api from "../api/api";
 import { AppContext } from "../AppContext";
-import ErrorAlert from "./ErrorAlert";
 
 const FetchDataComponent: React.FC = () => {
     const { state, updateState } = useContext(AppContext);
-    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         async function fetchData() {
-            setError(null);
+            updateState({ error: null });
             try {
-                // Use your API client to fetch data here
                 const result = await Api.chatAll();
                 var conv = result[0];
-                updateState({ points: conv.posts![0].points });
+                updateState({
+                    conversation: conv,
+                    conversations: result,
+                    points: conv.posts![0].points
+                });
             } catch (error) {
-                setError(error as Error);
+                updateState({ error: error as any });
             }
         }
 
@@ -26,7 +27,6 @@ const FetchDataComponent: React.FC = () => {
 
     return (
         <>
-            <ErrorAlert error={error} />
         </>
     );
 };

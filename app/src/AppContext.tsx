@@ -2,11 +2,12 @@ import React, { createContext, useState } from 'react';
 import { Conversation, Point } from './api';
 
 interface AppState {
-  error?: unknown;
+  error: Error | null;
   points: Point[];
+  conversation?: Conversation;
   conversations: Conversation[];
 }
- 
+
 interface AppContextProps extends WithChildren {
   state: AppState;
   updateState: (newState: Partial<AppState>) => void;
@@ -14,11 +15,11 @@ interface AppContextProps extends WithChildren {
 
 export const AppContext = createContext<AppContextProps>({
   state: {
-    error: undefined,
+    error: null,
     points: [],
     conversations: []
   },
-  updateState: () => {},
+  updateState: () => { },
 });
 
 export const AppContextConsumer = AppContext.Consumer;
@@ -26,6 +27,7 @@ export const AppContextConsumer = AppContext.Consumer;
 export const AppContextProvider: React.FC<WithChildren> = ({ children }) => {
   const [state, setState] = useState<AppState>({
     points: [],
+    error: null,
     conversations: [],
   });
 
