@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { Routes, Route, useParams } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -15,7 +15,47 @@ import FetchDataComponent from "./components/FetchDataComponent";
 import ErrorAlert from "./components/ErrorAlert";
 import { AppContext } from "./AppContext";
 import ConversationsComponent from "./components/ConversationsComponent";
-import LastConversationsComponent from "./components/LastConversationsComponent";
+import HistoryComponent from "./components/HistoryComponent";
+
+function AppRoute() {
+  const { state, updateState } = useContext(AppContext);
+  const { id, conversationId } = useParams<{ id: string, conversationId?: string }>();
+
+  useEffect(() => {
+    const point = state.points.find((p) => p.id === id);
+    updateState({ point });
+  }, [id, state.points, updateState]);
+
+  useEffect(() => {
+    if (state.conversation?.posts) {
+      const post = state.conversation?.posts[0];
+      const point = post.points![0];
+      updateState({ point, points: post.points });
+    }
+  }, [state.conversation, updateState]);
+
+  useEffect(() => {
+    const conversation = state.conversations.find((p) => p.id === conversationId);
+    if (conversation) {
+      updateState({
+        conversation
+      });
+    }
+  }, [conversationId, state.conversations, updateState]);
+
+  return (
+    <Row>
+      <Col sm="4" md="5" className="px-0" style={{ maxHeight: "calc(100vh - 66px)" }}>
+        <ConversationsComponent />
+      </Col>
+      <Col sm="8" md="7" className="px-0">
+        <div style={{ height: "calc(100vh - 66px)", backgroundColor: "#eee" }}>
+          <Map />
+        </div>
+      </Col>
+    </Row>
+  );
+}
 
 function App() {
   const { state } = useContext(AppContext);
@@ -28,21 +68,13 @@ function App() {
           <ErrorAlert error={state.error} />
         </Row>
       }
-      <LastConversationsComponent />
-      <Row>
-        <Col sm="4" md="5" className="px-0" style={{ maxHeight: "calc(100vh - 66px)" }}>
-          <ConversationsComponent />
-        </Col>
-        <Col sm="8" md="7" className="px-0">
-          <div style={{ height: "calc(100vh - 66px)", backgroundColor: "#eee" }}>
-            <Routes >
-              <Route path="/" element={<Map />} />
-              <Route path="/point/:id" element={<Map />} />
-              <Route path="/conversation/:id" element={<Map />} />
-            </Routes >
-          </div>
-        </Col>
-      </Row>
+      <HistoryComponent />
+      <Routes>
+        <Route path="/" element={<AppRoute />} />
+        <Route path="/:conversationId" element={<AppRoute />} />
+        <Route path="/:conversationId/:id" element={<AppRoute />} />
+      </Routes >
+
     </div>
   );
 }

@@ -59,10 +59,8 @@ const controls: azureMap.IAzureMapControls[] = [
 ];
 
 const Map: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
     const { state } = useContext(AppContext);
     const { mapRef, isMapReady } = useContext<IAzureMapsContextProps>(AzureMapsContext);
-
     const [mapOptions, setMapOptions] = useState<IAzureMapOptions>(option);
 
     const setMapCenterAndZoom = useCallback(
@@ -90,9 +88,9 @@ const Map: React.FC = () => {
     )
 
     useEffect(() => {
-        const point = state.points.find(p => p.id === id);
-        setPoint(point);
-    }, [id, state.points, setPoint])
+        setPoint(state.point);
+    }, [state.point, setPoint]);
+
 
     useEffect(() => {
         if (!mapRef) return;
@@ -124,7 +122,7 @@ const Map: React.FC = () => {
                             haloColor: "#000000",
                             haloWidth: 2,
                             size: 26,
-                            color: "#ff0000",
+                            color: "#aa0000",
                         },
                     }}
                     type={markersLayer}

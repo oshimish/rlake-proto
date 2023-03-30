@@ -1,8 +1,9 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 import { Conversation, Point } from './api';
 
 interface AppState {
   error: Error | null;
+  point?: Point;
   points: Point[];
   conversation?: Conversation;
   conversations: Conversation[];
@@ -31,9 +32,9 @@ export const AppContextProvider: React.FC<WithChildren> = ({ children }) => {
     conversations: [],
   });
 
-  const updateState = (newState: Partial<AppState>) => {
+  const updateState = useCallback((newState: Partial<AppState>) => {
     setState((prevState) => ({ ...prevState, ...newState }));
-  };
+  }, []);
 
   return <AppContext.Provider value={{ state, updateState }}>{children}</AppContext.Provider>
 };
