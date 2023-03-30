@@ -1,5 +1,6 @@
 
 using Azure.Storage.Blobs;
+using Microsoft.EntityFrameworkCore;
 using Rlake.Api.Services;
 
 namespace Rlake.Api.Controllers
@@ -8,58 +9,49 @@ namespace Rlake.Api.Controllers
     [Route("api/locations")]
     public class LocationsController : ControllerBase
     {
-        public LocationsController(UploadFileService mqClient,
+        public LocationsController(
+            ApiDbContext dbContext,
             ILogger<LocationsController> logger)
         {
-            UploadFileService = mqClient;
+            DbContext = dbContext;
             Logger = logger;
         }
 
-        public UploadFileService UploadFileService { get; }
+        public ApiDbContext DbContext { get; }
         public ILogger<LocationsController> Logger { get; }
 
-
+        /// <summary>
+        /// Get some points.
+        /// </summary>
         [HttpGet()]
-        public IList<Point> Get()
+        public async Task<IList<Point>> Get()
         {
-            List<Point> items = new()
-            {
-                new Point() { Id = Guid.NewGuid(), Title = "Sydney Opera House", Latitude = -33.8568, Longitude = 151.2153 }
-            };
+            var items = await DbContext.Points.Take(10).ToListAsync();
+            items.Add(new Point() { Id = Guid.NewGuid(), Title = "Sydney Opera House", Latitude = -33.8568, Longitude = 151.2153 });
             return items;
         }
         
+        /// <summary>
+        /// Get locations details by id.
+        /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Point> GetById(Guid id)
+        public async Task<ActionResult<Point>> GetById(Guid id)
         {
             if (id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var loc = new Point()
-            {
-                Id = id,
-                Title = $"Item {id}",
-            };
-            return Ok(loc);
-        }
+            var point = await DbContext.Points
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
-        {
-            // Check if the file is valid
-            if (file == null || file.Length == 0)
+            if (point == null)
             {
-                return BadRequest("Invalid file.");
+                return NotFound();
             }
 
-
-            // Upload the file
-            using var stream = file.OpenReadStream();
-            var blobPath = await UploadFileService.Upload(stream, file);
-
-            return Ok("File uploaded successfully.");
+            return Ok(point);
         }
     }
 }

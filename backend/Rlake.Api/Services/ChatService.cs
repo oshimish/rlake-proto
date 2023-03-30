@@ -89,38 +89,59 @@ namespace Rlake.Api.Services
 
         private CompletionResult ExtractPointsFromResponse(string response)
         {
-            var parts = response.Split("```");
-
+            var parts = response.Split("```"); // code marker
             var responseText = parts[0].Trim();
-            var json = parts[1].Trim();
 
             // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
             // This will depend on the format of the response from GPT-3
             Logger.LogInformation("Response text\n {responseText}", responseText);
-            Logger.LogDebug("Deserializing\n {response}", json);
-            var searchResult = JsonSerializer.Deserialize<CompletionResult>(json);
-            return searchResult;
+            try
+            {                
+                var json = parts[1].Trim();
+                Logger.LogDebug("Deserializing\n {json}", json);
+                if (string.IsNullOrEmpty(json))
+                {
+                    return new CompletionResult() { ResponseText = responseText, RawResponse = response };
+                }
+
+                var result = JsonSerializer.Deserialize<CompletionResult>(json)!;
+                result.RawResponse = response;
+                return result;
+            }
+            catch (JsonException e)
+            {
+                Logger.LogError(e, $"Error parsing the points: {response}");
+                return new CompletionResult() { ResponseText = responseText, RawResponse = response };
+            }
+            catch (Exception e)
+            {
+                throw new AiException($"Error parsing the response: {responseText}", e) { RawResponse = response  };
+            }
         }
 
         public class CompletionResult
         {
             [JsonPropertyName("response_text")]
-            public string ResponseText { get; set; }
+            public string? ResponseText { get; set; }
 
             [JsonPropertyName("locations")]
-            public List<Location> Locations { get; set; }
+            public List<Location> Locations { get; set; } = new();
+
+            public string? RawResponse { get; set; }
+
+            public string? Error { get; set; }
         }
 
         public class Location
         {
             [JsonPropertyName("title")]
-            public string Title { get; set; }
+            public string? Title { get; set; }
 
             [JsonPropertyName("reason")]
-            public string Reason { get; set; }
+            public string? Reason { get; set; }
 
             [JsonPropertyName("description")]
-            public string Description { get; set; }
+            public string? Description { get; set; }
 
             [JsonPropertyName("latitude")]
             public double Latitude { get; set; }
@@ -129,8 +150,21 @@ namespace Rlake.Api.Services
             public double Longitude { get; set; }
 
             [JsonPropertyName("additional_info")]
-            public string AdditionalInfo { get; set; }
+            public string? AdditionalInfo { get; set; }
         }
     }
 
+
+    [Serializable]
+    public class AiException : Exception
+    {
+        public AiException() { }
+        public AiException(string message) : base(message) { }
+        public AiException(string message, Exception inner) : base(message, inner) { }
+        protected AiException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+
+        public string? RawResponse { get; set; }
+    }
 }

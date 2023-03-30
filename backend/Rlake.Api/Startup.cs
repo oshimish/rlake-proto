@@ -1,15 +1,20 @@
-﻿using OpenAI.GPT3.Extensions;
+﻿using Microsoft.ApplicationInsights.Extensibility;
+using OpenAI.GPT3.Extensions;
 using Rlake.Api.Mapper;
+using System.Diagnostics;
+using System;
 
 namespace Rlake.Api;
 
 public class Startup
 {
     public IConfiguration Configuration { get; }
+    public IWebHostEnvironment Environment { get; }
 
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         Configuration = configuration;
+        Environment = environment;
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -23,11 +28,21 @@ public class Startup
         var options = Configuration.Get<AppOptions>();
 
         var connectionString = Configuration.GetConnectionString("ServiceBusConnection")!;
-        services.AddSingleton<AzureServiceBusClient>(new AzureServiceBusClient(connectionString));
+        services.AddSingleton(new AzureServiceBusClient(connectionString));
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            var docgenAssembly = this.GetType().Assembly;
+                
+            // Set the comments path for the Swagger JSON and UI.
+            var xmlFile = $"{docgenAssembly.GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
+                
+            options.EnableAnnotations();
+        });
         services.AddProblemDetails();
         services.AddApplicationInsightsTelemetry();
         services.AddCors();
@@ -42,12 +57,20 @@ public class Startup
             options.UseInMemoryDatabase("default");
         });
 
+        services.AddAntiforgery();
+
         services.AddOpenAIService();
+
+        if (Environment.IsDevelopment() && Debugger.IsAttached)
+        {
+            // any custom configuration can be done here:
+            services.Configure<TelemetryConfiguration>(x => x.DisableTelemetry = true);
+        }
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app)
     {
-        if (!env.IsProduction())
+        if (!Environment.IsProduction())
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -67,6 +90,12 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+
+            endpoints.MapGet("/", async context =>
+            {
+                context.Response.ContentType = "text/plain";
+                await context.Response.WriteAsync("API");
+            });
         });
     }
 }

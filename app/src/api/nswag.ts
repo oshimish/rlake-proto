@@ -19,11 +19,12 @@ export class NswagClient {
     }
 
     /**
+     * Creates a new AI conversation.
      * @param searchText (optional) 
      * @return Success
      */
-    chat(searchText: string | undefined): Promise<SearchResultDto> {
-        let url_ = this.baseUrl + "/api/Chat?";
+    start(searchText: string | undefined): Promise<SearchResultDto> {
+        let url_ = this.baseUrl + "/api/chat/start?";
         if (searchText === null)
             throw new Error("The parameter 'searchText' cannot be null.");
         else if (searchText !== undefined)
@@ -38,11 +39,11 @@ export class NswagClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processChat(_response);
+            return this.processStart(_response);
         });
     }
 
-    protected processChat(response: Response): Promise<SearchResultDto> {
+    protected processStart(response: Response): Promise<SearchResultDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -61,10 +62,11 @@ export class NswagClient {
     }
 
     /**
+     * Get last conversations list.
      * @return Success
      */
-    conversationsAll(): Promise<Conversation[]> {
-        let url_ = this.baseUrl + "/api/Chat/conversations";
+    chatAll(): Promise<Conversation[]> {
+        let url_ = this.baseUrl + "/api/chat";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -75,11 +77,11 @@ export class NswagClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processConversationsAll(_response);
+            return this.processChatAll(_response);
         });
     }
 
-    protected processConversationsAll(response: Response): Promise<Conversation[]> {
+    protected processChatAll(response: Response): Promise<Conversation[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -105,10 +107,11 @@ export class NswagClient {
     }
 
     /**
+     * Get conversation by id.
      * @return Success
      */
-    conversationsGET(id: string): Promise<Conversation> {
-        let url_ = this.baseUrl + "/api/Chat/conversations/{id}";
+    chatGET(id: string): Promise<Conversation> {
+        let url_ = this.baseUrl + "/api/chat/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -122,11 +125,11 @@ export class NswagClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processConversationsGET(_response);
+            return this.processChatGET(_response);
         });
     }
 
-    protected processConversationsGET(response: Response): Promise<Conversation> {
+    protected processChatGET(response: Response): Promise<Conversation> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -145,11 +148,12 @@ export class NswagClient {
     }
 
     /**
+     * Posts new message to the conversation.
      * @param body (optional) 
      * @return Success
      */
-    conversationsPOST(id: string, body: Post | undefined): Promise<Post> {
-        let url_ = this.baseUrl + "/api/Chat/conversations/{id}";
+    chatPOST(id: string, body: Post | undefined): Promise<Post> {
+        let url_ = this.baseUrl + "/api/chat/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -167,11 +171,11 @@ export class NswagClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processConversationsPOST(_response);
+            return this.processChatPOST(_response);
         });
     }
 
-    protected processConversationsPOST(response: Response): Promise<Post> {
+    protected processChatPOST(response: Response): Promise<Post> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -190,6 +194,7 @@ export class NswagClient {
     }
 
     /**
+     * Get some points.
      * @return Success
      */
     locationsAll(): Promise<Point[]> {
@@ -234,6 +239,7 @@ export class NswagClient {
     }
 
     /**
+     * Get locations details by id.
      * @return Success
      */
     locations(id: string): Promise<Point> {
@@ -274,11 +280,12 @@ export class NswagClient {
     }
 
     /**
+     * Uploads file to the blob.
      * @param file (optional) 
      * @return Success
      */
     upload(file: FileParameter | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/locations/upload";
+        let url_ = this.baseUrl + "/api/upload";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = new FormData();
@@ -315,6 +322,7 @@ export class NswagClient {
     }
 }
 
+/** Single AI Conversation */
 export class Conversation implements IConversation {
     id!: string;
     title?: string | undefined;
@@ -364,6 +372,7 @@ export class Conversation implements IConversation {
     }
 }
 
+/** Single AI Conversation */
 export interface IConversation {
     id: string;
     title?: string | undefined;
@@ -371,13 +380,17 @@ export interface IConversation {
     posts?: Post[] | undefined;
 }
 
+/** Geo point. Each Post can have few points. */
 export class Point implements IPoint {
     id!: string;
     title?: string | undefined;
-    geoRaw?: string | undefined;
     latitude?: number;
     longitude?: number;
-    postId?: string | undefined;
+    reason?: string | undefined;
+    description?: string | undefined;
+    additionalInfo?: string | undefined;
+    order?: number | undefined;
+    postId?: string;
 
     constructor(data?: IPoint) {
         if (data) {
@@ -392,9 +405,12 @@ export class Point implements IPoint {
         if (_data) {
             this.id = _data["id"];
             this.title = _data["title"];
-            this.geoRaw = _data["geoRaw"];
             this.latitude = _data["latitude"];
             this.longitude = _data["longitude"];
+            this.reason = _data["reason"];
+            this.description = _data["description"];
+            this.additionalInfo = _data["additionalInfo"];
+            this.order = _data["order"];
             this.postId = _data["postId"];
         }
     }
@@ -410,29 +426,37 @@ export class Point implements IPoint {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["title"] = this.title;
-        data["geoRaw"] = this.geoRaw;
         data["latitude"] = this.latitude;
         data["longitude"] = this.longitude;
+        data["reason"] = this.reason;
+        data["description"] = this.description;
+        data["additionalInfo"] = this.additionalInfo;
+        data["order"] = this.order;
         data["postId"] = this.postId;
         return data;
     }
 }
 
+/** Geo point. Each Post can have few points. */
 export interface IPoint {
     id: string;
     title?: string | undefined;
-    geoRaw?: string | undefined;
     latitude?: number;
     longitude?: number;
-    postId?: string | undefined;
+    reason?: string | undefined;
+    description?: string | undefined;
+    additionalInfo?: string | undefined;
+    order?: number | undefined;
+    postId?: string;
 }
 
+/** Conversation has many Posts */
 export class Post implements IPost {
     id!: string;
     text?: string | undefined;
     createdAt?: Date;
     conversationId?: string;
-    locations?: Point[] | undefined;
+    points?: Point[] | undefined;
 
     constructor(data?: IPost) {
         if (data) {
@@ -449,10 +473,10 @@ export class Post implements IPost {
             this.text = _data["text"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
             this.conversationId = _data["conversationId"];
-            if (Array.isArray(_data["locations"])) {
-                this.locations = [] as any;
-                for (let item of _data["locations"])
-                    this.locations!.push(Point.fromJS(item));
+            if (Array.isArray(_data["points"])) {
+                this.points = [] as any;
+                for (let item of _data["points"])
+                    this.points!.push(Point.fromJS(item));
             }
         }
     }
@@ -470,25 +494,27 @@ export class Post implements IPost {
         data["text"] = this.text;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["conversationId"] = this.conversationId;
-        if (Array.isArray(this.locations)) {
-            data["locations"] = [];
-            for (let item of this.locations)
-                data["locations"].push(item.toJSON());
+        if (Array.isArray(this.points)) {
+            data["points"] = [];
+            for (let item of this.points)
+                data["points"].push(item.toJSON());
         }
         return data;
     }
 }
 
+/** Conversation has many Posts */
 export interface IPost {
     id: string;
     text?: string | undefined;
     createdAt?: Date;
     conversationId?: string;
-    locations?: Point[] | undefined;
+    points?: Point[] | undefined;
 }
 
 export class SearchResultDto implements ISearchResultDto {
     searchText?: string | undefined;
+    conversation!: Conversation;
     items!: Point[];
 
     constructor(data?: ISearchResultDto) {
@@ -499,6 +525,7 @@ export class SearchResultDto implements ISearchResultDto {
             }
         }
         if (!data) {
+            this.conversation = new Conversation();
             this.items = [];
         }
     }
@@ -506,6 +533,7 @@ export class SearchResultDto implements ISearchResultDto {
     init(_data?: any) {
         if (_data) {
             this.searchText = _data["searchText"];
+            this.conversation = _data["conversation"] ? Conversation.fromJS(_data["conversation"]) : new Conversation();
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -524,6 +552,7 @@ export class SearchResultDto implements ISearchResultDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["searchText"] = this.searchText;
+        data["conversation"] = this.conversation ? this.conversation.toJSON() : <any>undefined;
         if (Array.isArray(this.items)) {
             data["items"] = [];
             for (let item of this.items)
@@ -535,6 +564,7 @@ export class SearchResultDto implements ISearchResultDto {
 
 export interface ISearchResultDto {
     searchText?: string | undefined;
+    conversation: Conversation;
     items: Point[];
 }
 

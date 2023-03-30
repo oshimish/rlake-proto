@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Rlake.Api.Data
 {
+    /// <summary>
+    /// Single AI Conversation
+    /// </summary>
     public class Conversation
     {
         [Required]
@@ -16,7 +19,9 @@ namespace Rlake.Api.Data
         public IList<Post> Posts { get; set; } = new List<Post>();
     }
 
-    [Owned]
+    /// <summary>
+    /// Conversation has many Posts
+    /// </summary>
     public class Post
     {
         [Required]
@@ -24,37 +29,47 @@ namespace Rlake.Api.Data
         public Guid Id { get; set; }
 
         public string Text { get; set; } = "";
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public Guid ConversationId { get; set; }
 
         [JsonIgnore]
-        public Conversation Conversation { get; set; }
-        public IList<Point> Locations { get; set; } = new List<Point>();
+        public Conversation Conversation { get; set; } = default!;
+
+        public IList<Point> Points { get; set; } = new List<Point>();
     }
 
+    /// <summary>
+    /// Geo point. Each Post can have few points.
+    /// </summary>
     public class Point
     {
         [Required]
         [Key]
         public Guid Id { get; set; }
 
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; } = string.Empty;
 
 
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        public string Reason { get; set; }
-        public string Description { get; set; }
-        public string AdditionalInfo { get; set; }
+        public string? Reason { get; set; }
+        public string? Description { get; set; }
+        public string? AdditionalInfo { get; set; }
 
-        public Guid? PostId { get; set; }
+        public int? Order { get; set; }
+
+        public Guid PostId { get; set; }
 
         [JsonIgnore]
-        public Post? Post { get; set; }
+        public Post Post { get; set; } = default!;
     }
 
+    /// <summary>
+    /// An file uploaded to the blob.
+    /// </summary>
 
     public class Upload
     {
@@ -71,5 +86,7 @@ namespace Rlake.Api.Data
 
         [Required]
         public string BlobPath { get; set; } = "";
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

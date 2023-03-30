@@ -2,16 +2,10 @@
 {
     public class SearchResultDto
     {
-        public string SearchText { get; set; }
-
+        public string SearchText { get; set; } = "";
 
         [Required]
-        public List<Point> Items { get; set; } = new();
-    }
-    public class LocationDto
-    {
-        public string SearchText { get; set; }
-
+        public Conversation Conversation { get; set; } = default!;
 
         [Required]
         public List<Point> Items { get; set; } = new();

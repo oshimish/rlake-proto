@@ -16,7 +16,7 @@ public class ChatController_Tests : IClassFixture<WebApplicationFactory<Startup>
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.PostAsync("/api/chat?searchText=nice%20places", null);
+        var response = await client.PostAsync("/api/chat/start?searchText=nice%20places", null);
 
         // Assert
         response.EnsureSuccessStatusCode();

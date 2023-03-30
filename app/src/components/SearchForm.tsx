@@ -17,12 +17,12 @@ const SearchForm: React.FC = () => {
 
         try {
             setLoading(true);
-            const result = await Api.chat(searchQuery);
+            const result = await Api.start(searchQuery);
             updateState({
                 points: result.items,
-              });
+            });
         } catch (error) {
-            updateState({error});
+            updateState({ error });
         }
         setLoading(false);
     };
