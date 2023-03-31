@@ -26,7 +26,7 @@ const SearchForm: React.FC = () => {
         } catch (error) {
             updateState({ error: error as any, loading: false });
         }
-        updateState({ loading: true });
+        updateState({ loading: false });
     };
 
     return (
