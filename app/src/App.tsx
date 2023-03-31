@@ -88,21 +88,23 @@ function AppRoute() {
 function App() {
   const { state } = useContext(AppContext);
   return (
-    <div className="container-fluid">
+    <>
       <NavbarComponent />
-      <FetchDataComponent />
-      {state.error &&
-        <Row className="mx-1 mt-3 mb-1" >
-          <ErrorAlert error={state.error} />
-        </Row>
-      }
-      <Routes>
-        <Route path="/" element={<AppRoute />} />
-        <Route path="/:conversationId" element={<AppRoute />} />
-        <Route path="/:conversationId/:id" element={<AppRoute />} />
-      </Routes >
+      <div className="container-fluid">
+        <FetchDataComponent />
+        {state.error &&
+          <Row className="mx-1 mt-3 mb-1" >
+            <ErrorAlert error={state.error} />
+          </Row>
+        }
+        <Routes>
+          <Route path="/" element={<AppRoute />} />
+          <Route path="/:conversationId" element={<AppRoute />} />
+          <Route path="/:conversationId/:id" element={<AppRoute />} />
+        </Routes >
 
-    </div>
+      </div>
+    </>
   );
 }
 
