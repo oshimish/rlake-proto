@@ -3,6 +3,7 @@ using OpenAI.GPT3.Interfaces;
 using OpenAI.GPT3.Managers;
 using OpenAI.GPT3.ObjectModels.RequestModels;
 using OpenAI.GPT3.ObjectModels;
+using System.Text.RegularExpressions;
 
 namespace Rlake.Api.Services
 {
@@ -40,7 +41,7 @@ namespace Rlake.Api.Services
                         Latitude = 12.34,
                         Longitude = 56.78,
                         AdditionalInfo = "More interesting information",
-                    } 
+                    }
                 }
             });
 
@@ -53,17 +54,17 @@ namespace Rlake.Api.Services
                     ChatMessage.FromAssistant(@"find places on the map."),
                     ChatMessage.FromAssistant(@"list any most related 3-7 places."),
                     ChatMessage.FromAssistant(@"finish response, anyway and only single json at the end"),
-                    ChatMessage.FromAssistant(jsonExample),
+                    ChatMessage.FromAssistant(@$"required json schema is {jsonExample}"),
                     //ChatMessage.FromUser(@"no need translate"),
                     //ChatMessage.FromAssistant(@"anyway and only one json at the end"),
                     //ChatMessage.FromAssistant(@"answer on last message language"),
                     //ChatMessage.FromAssistant(@"5-20 places with coordinates"),
                     ChatMessage.FromUser($"{searchText}")
                 },
-                Model = Models.ChatGpt3_5Turbo,                
-                MaxTokens = 1080 // optional
-            }; 
-            Logger.LogDebug("Request\n {request}", JsonSerializer.Serialize(request, new JsonSerializerOptions() { WriteIndented = true } ));
+                Model = Models.ChatGpt3_5Turbo,
+                MaxTokens = 2080 // optional
+            };
+            Logger.LogDebug("Request\n {request}", JsonSerializer.Serialize(request, new JsonSerializerOptions() { WriteIndented = true }));
             var completionResult = await OpenAiService.ChatCompletion.CreateCompletion(request);
             Logger.LogDebug("Result\n {completionResult}", JsonSerializer.Serialize(completionResult, new JsonSerializerOptions() { WriteIndented = true }));
 
@@ -97,6 +98,30 @@ namespace Rlake.Api.Services
             {
                 //try to find only json part
                 var json = response.Substring(openToken, response.LastIndexOf('}') - openToken + 1);
+
+                try
+                {
+
+                    // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
+                    // This will depend on the format of the response from GPT-3
+                    Logger.LogDebug("Deserializing\n {json}", json);
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        var result = JsonSerializer.Deserialize<CompletionResult>(json)!;
+                        result.RawResponse = response;
+                        result.HasData = true;
+                        return result;
+                    }
+                    return new CompletionResult() { ResponseText = responseText, RawResponse = response };
+                }
+                catch (JsonException e)
+                {
+                    Logger.LogError(e, $"Error parsing the points: {response}");
+                }
+
+                Logger.LogWarning("Try to fix unfinished json", json);
+
+                json = Regex.Replace(json, @",[^,]*$", "}]}");
 
                 // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
                 // This will depend on the format of the response from GPT-3
