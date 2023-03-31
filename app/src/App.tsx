@@ -67,7 +67,7 @@ function AppRoute() {
     <>
       <Row>
         <div className='px-4 border  navbar navbar-light bg-light shadow' ref={navRef}>
-          <h2 className='--display-5'>{state.conversation?.title}</h2>
+          <h2 className='--display-5  text-truncate'>{state.conversation?.title}</h2>
         </div>
       </Row>
       <Row style={{ maxHeight: `calc(100vh - ${state.navFix}px)` }}>
