@@ -1,8 +1,7 @@
 import React from "react";
 import logo from "../logo.svg";
 import {
-    Navbar,
-    NavbarBrand
+    Navbar
 } from "reactstrap";
 
 
@@ -15,7 +14,7 @@ const NavbarComponent: React.FC = () => {
         <Navbar color="light" light expand="md" >
             <Link to="/" className='navbar-brand'>
                 <img alt="logo" src={logo} style={{ height: 40, width: 40 }} />
-                ChatGPT Maps
+                ChatGPT Map
             </Link>
 
             <SearchForm />

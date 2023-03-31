@@ -1,26 +1,16 @@
-import { useContext, useLayoutEffect, useRef } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import { AppContext } from '../AppContext';
 
 const ConversationsComponent: React.FC = () => {
     const { state, updateState } = useContext(AppContext);
-    const navRef = useRef<HTMLDivElement>(null);
 
     const conversation = state.conversation;
     const post = conversation?.posts?.[0];
 
-    useLayoutEffect(() => {
-        if (navRef.current) {
-            updateState({ navFix: navRef.current.offsetHeight + navRef.current.offsetTop + 0 });
-        }
-    }, [navRef, updateState]);
-
     return (
         <>
-            <div className='px-2 border  navbar navbar-light bg-light shadow ' ref={navRef}>
-                <h4 className=''>{conversation?.title}</h4>
-            </div>
             <ListGroup style={{ height: `calc(100vh - ${state.navFix}px)`, overflowY: 'auto' }}>
                 {conversation && post && (
                     <>

@@ -1,6 +1,6 @@
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, ListGroup } from 'reactstrap';
+import { Badge } from 'reactstrap';
 import { AppContext } from '../AppContext';
 
 const HistoryComponent: React.FC = () => {
@@ -9,9 +9,22 @@ const HistoryComponent: React.FC = () => {
     const conversations = state.conversations;
 
     useLayoutEffect(() => {
-        if (historyRef.current) {
-            updateState({ heightFix: historyRef.current.offsetHeight + historyRef.current.offsetTop });
-        }
+        const handleResize = () => {
+            if (historyRef.current) {
+                updateState({
+                    heightFix: historyRef.current.offsetHeight
+                });
+            }
+        };
+        setTimeout(() => {
+            handleResize();
+        }, (1000));
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, [historyRef, updateState]);
 
     return (
@@ -24,7 +37,7 @@ const HistoryComponent: React.FC = () => {
                             <h6>
                                 <Badge className='rounded-pill bg-dark text-truncate'
                                     style={{ maxWidth: '20rem' }}>
-                                    {conversation.title?.replace(/:$/, "")}
+                                    {conversation.title?.replace(/:$/, "").replace(/^(Here are|There are)\s/, "")}
                                 </Badge>
                             </h6>
                         </Link>

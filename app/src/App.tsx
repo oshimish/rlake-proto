@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -20,6 +20,7 @@ import HistoryComponent from "./components/HistoryComponent";
 function AppRoute() {
   const { state, updateState } = useContext(AppContext);
   const { id, conversationId } = useParams<{ id: string, conversationId?: string }>();
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const point = state.points.find((p) => p.id === id);
@@ -44,26 +45,50 @@ function AppRoute() {
   }, [conversationId, state.conversations, updateState]);
 
 
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (navRef.current) {
+        updateState({ navFix: navRef.current.offsetHeight + navRef.current.offsetTop });
+      }
+    };
+
+    setTimeout(() => {
+      handleResize();
+    }, (1000));
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [navRef, updateState]);
 
   return (
-    <Row >
-      <Col sm="4" md="5" className="px-0" style={{ maxHeight: "calc(100vh - 66px)" }}>
-        <ConversationsComponent />
-      </Col>
-      <Col sm="8" md="7" className="px-0">
-        <HistoryComponent />
-        <div style={{ height: `calc(100vh - ${state.heightFix}px)`, backgroundColor: "#eee" }}>
-          <Map />
+    <>
+      <Row>
+        <div className='px-4 border  navbar navbar-light bg-light shadow' ref={navRef}>
+          <h2 className='--display-5'>{state.conversation?.title}</h2>
         </div>
-      </Col>
-    </Row>
+      </Row>
+      <Row style={{ maxHeight: `calc(100vh - ${state.navFix}px)` }}>
+        <Col sm="4" md="5" className="px-0">
+          <ConversationsComponent />
+        </Col>
+        <Col sm="8" md="7" className="px-0">
+          <HistoryComponent />
+          <div style={{ height: `calc(100vh - ${state.navFix}px - ${state.heightFix}px)`, backgroundColor: "#eee" }}>
+            <Map />
+          </div>
+        </Col>
+      </Row>
+    </>
   );
 }
 
 function App() {
   const { state } = useContext(AppContext);
   return (
-    <div className="container-fluid" style={{ height: "100vh" }}>
+    <div className="container-fluid">
       <NavbarComponent />
       <FetchDataComponent />
       {state.error &&
