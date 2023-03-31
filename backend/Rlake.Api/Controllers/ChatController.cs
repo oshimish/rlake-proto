@@ -75,6 +75,7 @@ namespace Rlake.Api.Controllers
         public async Task<ActionResult<IList<Conversation>>> GetConversations()
         {
             var data = await DbContext.Conversations
+                .OrderByDescending(x => x.CreatedAt)
                 .Take(20)
                 .Include(x => x.Posts).ThenInclude(x => x.Points)
                 .Where(x => x.Posts.SelectMany(p => p.Points).Any())
