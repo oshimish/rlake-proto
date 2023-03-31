@@ -62,7 +62,7 @@ namespace Rlake.Api.Services
                     ChatMessage.FromUser($"{searchText}")
                 },
                 Model = Models.ChatGpt3_5Turbo,
-                MaxTokens = 2080 // optional
+                MaxTokens = 1080 // optional
             };
             Logger.LogDebug("Request\n {request}", JsonSerializer.Serialize(request, new JsonSerializerOptions() { WriteIndented = true }));
             var completionResult = await OpenAiService.ChatCompletion.CreateCompletion(request);
