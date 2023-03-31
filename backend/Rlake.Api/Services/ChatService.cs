@@ -52,7 +52,7 @@ namespace Rlake.Api.Services
                     ChatMessage.FromSystem(@"You are a helpful assistant that provides json with places"),
                     //ChatMessage.FromUser(searchText)
                     ChatMessage.FromAssistant(@"find places on the map."),
-                    ChatMessage.FromAssistant(@"list any most related 3-7 places."),
+                    ChatMessage.FromAssistant(@"list any most related 5-13 places."),
                     ChatMessage.FromAssistant(@"finish response, anyway and only single json at the end"),
                     ChatMessage.FromAssistant(@$"required json schema is {jsonExample}"),
                     //ChatMessage.FromUser(@"no need translate"),
@@ -62,7 +62,7 @@ namespace Rlake.Api.Services
                     ChatMessage.FromUser($"{searchText}")
                 },
                 Model = Models.ChatGpt3_5Turbo,
-                MaxTokens = 1080 // optional
+                MaxTokens = 1480 // optional
             };
             Logger.LogDebug("Request\n {request}", JsonSerializer.Serialize(request, new JsonSerializerOptions() { WriteIndented = true }));
             var completionResult = await OpenAiService.ChatCompletion.CreateCompletion(request);
