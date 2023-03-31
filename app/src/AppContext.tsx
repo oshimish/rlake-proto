@@ -3,6 +3,7 @@ import { Conversation, Point } from './api';
 
 interface AppState {
   error: Error | null;
+  loading?: boolean,
   point?: Point;
   points: Point[];
   conversation?: Conversation;

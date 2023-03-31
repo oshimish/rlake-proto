@@ -29,6 +29,10 @@ const HistoryComponent: React.FC = () => {
         };
     }, [historyRef, updateState, isMapReady]);
 
+    if (conversations.length === 0) {
+        return null;
+    }
+
     return (
         <div className='border pb-0 navbar navbar-light bg-light px-2 overflow-auto' ref={historyRef} style={{ maxHeight: '108px' }} >
             <div className='d-inline-flex align-items-stretch flex-wrap'>

@@ -6,7 +6,6 @@ import { AppContext } from "../AppContext";
 const SearchForm: React.FC = () => {
     const { state, updateState } = useContext(AppContext);
     const [searchQuery, setSearchQuery] = useState("");
-    const [loading, setLoading] = useState(false);
 
     const handleSearchChange = (event: any) => {
         setSearchQuery(event.target.value);
@@ -16,8 +15,7 @@ const SearchForm: React.FC = () => {
         event.preventDefault();
 
         try {
-            updateState({ error: null });
-            setLoading(true);
+            updateState({ error: null, loading: true });
             const result = await Api.start(searchQuery);
             state.conversations.push(result.conversation)
             updateState({
@@ -26,9 +24,9 @@ const SearchForm: React.FC = () => {
                 points: result.items,
             });
         } catch (error) {
-            updateState({ error: error as any });
+            updateState({ error: error as any, loading: false });
         }
-        setLoading(false);
+        updateState({ loading: true });
     };
 
     return (
@@ -42,28 +40,13 @@ const SearchForm: React.FC = () => {
                     autoComplete="on"
                 />
                 <Button type="submit" color="primary">
-                    {!loading ? (
+                    {!state.loading ? (
                         "Ask"
                     ) : (
                         <Spinner size="sm" color="light" />
                     )}
                 </Button>
             </InputGroup>
-
-
-            <Modal isOpen={loading} centered>
-                <ModalBody className="d-flex m-4">
-                    <div className="row  justify-content-center align-items-center">
-                        <div className="col-2" >
-                            {<Spinner size="lg" color="primary" className="spinner-border  text-success" >
-                            </Spinner>}</div>
-                        <div className="col-10">
-                            <span>Be patient, I'm a bot not a magician! Loading... <br />
-                                It can take a while (I'm really busy)</span></div>
-                    </div>
-
-                </ModalBody>
-            </Modal>
         </Form>
     );
 };
