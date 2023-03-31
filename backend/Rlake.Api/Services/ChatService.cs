@@ -11,23 +11,20 @@ namespace Rlake.Api.Services
         public ChatService(IOptions<AppOptions> options,
             IOpenAIService openAiService,
             AzureServiceBusClient busClient,
-            IMapper mapper,
             ILogger<ChatService> logger)
         {
             Options = options;
             OpenAiService = openAiService;
             BusClient = busClient;
-            Mapper = mapper;
             Logger = logger;
         }
 
         public IOptions<AppOptions> Options { get; }
         public IOpenAIService OpenAiService { get; }
         public AzureServiceBusClient BusClient { get; }
-        public IMapper Mapper { get; }
         public ILogger<ChatService> Logger { get; }
 
-        public async Task<SearchResultDto> Post(string searchText)
+        public async Task<CompletionResult> Post(string searchText)
         {
             Logger.LogDebug($"Post {searchText}");
 
@@ -54,11 +51,11 @@ namespace Rlake.Api.Services
                     ChatMessage.FromSystem(@"You are a helpful assistant that provides json with places"),
                     //ChatMessage.FromUser(searchText)
                     ChatMessage.FromAssistant(@"find places on the map."),
-                    ChatMessage.FromAssistant(@"list 3-7 places."),
-                    ChatMessage.FromAssistant(@"json: " + jsonExample),
-                    ChatMessage.FromAssistant(@"finish response"),
+                    ChatMessage.FromAssistant(@"list any most related 3-7 places."),
+                    ChatMessage.FromAssistant(@"finish response, anyway and only single json at the end"),
+                    ChatMessage.FromAssistant(jsonExample),
                     //ChatMessage.FromUser(@"no need translate"),
-                    ChatMessage.FromAssistant(@"anyway and only one json at the end"),
+                    //ChatMessage.FromAssistant(@"anyway and only one json at the end"),
                     //ChatMessage.FromAssistant(@"answer on last message language"),
                     //ChatMessage.FromAssistant(@"5-20 places with coordinates"),
                     ChatMessage.FromUser($"{searchText}")
@@ -74,8 +71,7 @@ namespace Rlake.Api.Services
             {
                 // Extract geo points from the response
                 var result = ExtractPointsFromResponse(completionResult.Choices.First().Message.Content);
-
-                return Mapper.Map<SearchResultDto>(result);
+                return result;
             }
 
             // Handle cases when the completion is not successful
@@ -95,33 +91,35 @@ namespace Rlake.Api.Services
 
             var responseText = response.Substring(0, openToken);
             responseText = responseText.Replace("\n\njson:", "");
+            responseText = responseText.Replace("```", "").Trim();
             Logger.LogInformation("Response text\n {responseText}", responseText);
             try
-            {                
+            {
                 //try to find only json part
                 var json = response.Substring(openToken, response.LastIndexOf('}') - openToken + 1);
 
                 // Implement this method to parse the GPT-3 response and convert it into a list of Point objects
                 // This will depend on the format of the response from GPT-3
                 Logger.LogDebug("Deserializing\n {json}", json);
-                if (string.IsNullOrEmpty(json))
+                if (!string.IsNullOrEmpty(json))
                 {
-                    return new CompletionResult() { ResponseText = responseText, RawResponse = response };
+                    var result = JsonSerializer.Deserialize<CompletionResult>(json)!;
+                    result.RawResponse = response;
+                    result.HasData = true;
+                    return result;
                 }
-
-                var result = JsonSerializer.Deserialize<CompletionResult>(json)!;
-                result.RawResponse = response;
-                return result;
+                return new CompletionResult() { ResponseText = responseText, RawResponse = response };
             }
             catch (JsonException e)
             {
                 Logger.LogError(e, $"Error parsing the points: {response}");
-                return new CompletionResult() { ResponseText = responseText, RawResponse = response };
             }
             catch (Exception e)
             {
-                throw new AiException($"Error parsing the response: {responseText}", e) { RawResponse = response  };
+                Logger.LogError(e, $"Error parsing the response: {responseText}");
+                //throw new AiException($"Error parsing the response: {responseText}", e) { RawResponse = response  };
             }
+            return new CompletionResult() { ResponseText = responseText, RawResponse = response };
         }
 
         public class CompletionResult
@@ -137,6 +135,9 @@ namespace Rlake.Api.Services
 
             [JsonIgnore]
             public string? Error { get; set; }
+
+            [JsonIgnore]
+            public bool HasData { get; set; }
         }
 
         public class Location

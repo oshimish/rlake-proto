@@ -12,19 +12,21 @@ namespace Rlake.Api.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-
-        public ChatController(ChatService chatService, 
+        public ChatController(ChatService chatService,
             ApiDbContext dbContext,
-            ILogger<ChatController> logger)
+            ILogger<ChatController> logger,
+            IMapper mapper)
         {
             ChatService = chatService;
             DbContext = dbContext;
             Logger = logger;
+            Mapper = mapper;
         }
 
         public ChatService ChatService { get; }
         public ApiDbContext DbContext { get; }
         public ILogger Logger { get; }
+        public IMapper Mapper { get; }
 
         /// <summary>
         /// Creates a new AI conversation.
@@ -32,23 +34,34 @@ namespace Rlake.Api.Controllers
         [HttpPost("start")]
         public async Task<ActionResult<SearchResultDto>> Start(string searchText)
         {
-            var result = await ChatService.Post(searchText);
+            var completion = await ChatService.Post(searchText);
+            var result = Mapper.Map<SearchResultDto>(completion);
 
             var conversation = new Conversation()
             {
                 Title = result.SearchText,
-
             };
-            DbContext.Add(conversation);
 
             var post = new Post()
             {
                 Text = result.SearchText,
                 Points = result.Items
             };
-
             conversation.Posts.Add(post);
-            await DbContext.SaveChangesAsync();
+
+            // hack: store only if any locations
+            if (completion.HasData && completion.Locations.Any())
+            {
+                DbContext.Add(post);
+                DbContext.Add(conversation);
+                await DbContext.SaveChangesAsync();
+            }
+            else
+            {
+                conversation.Id = Guid.NewGuid();
+                post.Id = Guid.NewGuid();
+                post.ConversationId = conversation.Id;
+            }
 
             result.Conversation = conversation;
 
@@ -64,6 +77,7 @@ namespace Rlake.Api.Controllers
             var data = await DbContext.Conversations
                 .Take(20)
                 .Include(x => x.Posts).ThenInclude(x => x.Points)
+                .Where(x => x.Posts.SelectMany(p => p.Points).Any())
                 .ToListAsync();            
 
             return Ok(data);

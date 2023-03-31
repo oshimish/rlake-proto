@@ -39,6 +39,7 @@ const SearchForm: React.FC = () => {
                     placeholder="Ask ChatGPT about any places you want"
                     value={searchQuery}
                     onChange={handleSearchChange}
+                    autoComplete="on"
                 />
                 <Button type="submit" color="primary">
                     {!loading ? (

@@ -8,14 +8,15 @@ import {
 
 import SearchForm from "./SearchForm";
 import UploadForm from "./UploadForm";
+import { Link } from "react-router-dom";
 
 const NavbarComponent: React.FC = () => {
     return (
         <Navbar color="light" light expand="md" >
-            <NavbarBrand href="/" src={logo} className=''>
+            <Link to="/" className='navbar-brand'>
                 <img alt="logo" src={logo} style={{ height: 40, width: 40 }} />
                 ChatGPT Maps
-            </NavbarBrand>
+            </Link>
 
             <SearchForm />
             <UploadForm />
