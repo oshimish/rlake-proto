@@ -3,6 +3,12 @@ using OpenAI.GPT3.Extensions;
 using Rlake.Api.Mapper;
 using System.Diagnostics;
 using System;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Azure;
+using Azure.Storage.Queues;
+using Azure.Storage.Blobs;
+using Azure.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Rlake.Api;
 
@@ -53,7 +59,7 @@ public class Startup
 
         services.AddDbContext<ApiDbContext>(options =>
         {
-            options.UseSqlServer(Configuration.GetConnectionString("Default"));
+            options.UseCosmos(Configuration.GetConnectionString("Cosmos")!, "RlakeDB");
             //options.UseInMemoryDatabase("default");
         });
 

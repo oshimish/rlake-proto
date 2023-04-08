@@ -5,7 +5,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "VaultUri": "https://rlake-keys.vault.azure.net/",
+        "AZURE_USERNAME": "oshimish@gmail.com"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5175"
@@ -15,7 +17,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "VaultUri": "https://rlake-keys.vault.azure.net/",
+        "AZURE_USERNAME": "oshimish@gmail.com"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7272;http://localhost:5175"
@@ -25,7 +29,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "VaultUri": "https://rlake-keys.vault.azure.net/",
+        "AZURE_USERNAME": "oshimish@gmail.com"
       }
     },
     "Docker": {
@@ -33,7 +39,11 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "environmentVariables": {
+        "VaultUri": "https://rlake-keys.vault.azure.net/",
+        "AZURE_USERNAME": "oshimish@gmail.com"
+      }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

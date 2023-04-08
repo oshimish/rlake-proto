@@ -1,18 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OpenAI.GPT3.Interfaces;
-using Rlake.Api.Data;
-using Rlake.Api.Dto;
-using Rlake.Api.Services;
-
-namespace Rlake.Api.Controllers
+﻿namespace Rlake.Api.Controllers
 {
     [Route("api/chat")]
     [ApiController]
     public class ChatController : ControllerBase
-    {
-        public ChatController(ChatService chatService,
+    {        public ChatController(ChatService chatService,
             ApiDbContext dbContext,
             ILogger<ChatController> logger,
             IMapper mapper)
@@ -52,7 +43,6 @@ namespace Rlake.Api.Controllers
             // hack: store only if any locations
             if (completion.HasData && completion.Locations.Any())
             {
-                DbContext.Add(post);
                 DbContext.Add(conversation);
                 await DbContext.SaveChangesAsync();
             }
@@ -60,7 +50,6 @@ namespace Rlake.Api.Controllers
             {
                 conversation.Id = Guid.NewGuid();
                 post.Id = Guid.NewGuid();
-                post.ConversationId = conversation.Id;
             }
 
             result.Conversation = conversation;
@@ -77,9 +66,10 @@ namespace Rlake.Api.Controllers
             var data = await DbContext.Conversations
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(20)
-                .Include(x => x.Posts).ThenInclude(x => x.Points)
-                .Where(x => x.Posts.SelectMany(p => p.Points).Any())
-                .ToListAsync();            
+                .ToListAsync();
+
+            // remove no points posts
+            data = data.Where(x => x.Posts.SelectMany(p => p.Points).Any()).ToList();
 
             return Ok(data);
         }
@@ -121,7 +111,6 @@ namespace Rlake.Api.Controllers
                 return NotFound();
             }
 
-            post.ConversationId = id;
             conversation.Posts.Add(post);
             try
             {

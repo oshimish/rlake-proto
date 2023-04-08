@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Rlake.Api
 {
@@ -12,7 +14,13 @@ namespace Rlake.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .ConfigureLogging((context, builder) =>            {
+            .ConfigureAppConfiguration((context, config) =>
+            {
+                var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri")!);
+                config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+            })
+            .ConfigureLogging((context, builder) =>
+            {
                 var conString = context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"] ?? context.Configuration["ApplicationInsights:ConnectionString"];
 
                 if (!string.IsNullOrEmpty(conString))

@@ -32,11 +32,6 @@ namespace Rlake.Api.Data
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public Guid ConversationId { get; set; }
-
-        [JsonIgnore]
-        public Conversation Conversation { get; set; } = default!;
-
         public IList<Point> Points { get; set; } = new List<Point>();
     }
 
@@ -60,11 +55,6 @@ namespace Rlake.Api.Data
         public string? AdditionalInfo { get; set; }
 
         public int? Order { get; set; }
-
-        public Guid PostId { get; set; }
-
-        [JsonIgnore]
-        public Post Post { get; set; } = default!;
     }
 
     /// <summary>
