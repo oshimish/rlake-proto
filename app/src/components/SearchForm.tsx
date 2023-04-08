@@ -17,7 +17,7 @@ const SearchForm: React.FC = () => {
         try {
             updateState({ error: null, loading: true });
             const result = await Api.start(searchQuery);
-            state.conversations.push(result.conversation)
+            result.conversation && state.conversations.push(result.conversation)
             updateState({
                 conversation: result.conversation,
                 conversations: state.conversations,
@@ -29,7 +29,8 @@ const SearchForm: React.FC = () => {
         updateState({ loading: false });
     };
 
-    return (
+    return (<>
+
         <Form onSubmit={handleSearchSubmit} className="d-flex flex-fill mx-4">
             <InputGroup>
                 <Input
@@ -48,6 +49,20 @@ const SearchForm: React.FC = () => {
                 </Button>
             </InputGroup>
         </Form>
+        <Modal isOpen={state.loading} centered>
+            <ModalBody className="d-flex m-4">
+                <div className="row  justify-content-center align-items-center">
+                    <div className="col-2" >
+                        {<Spinner size="lg" color="primary" className="spinner-border  text-success" >
+                        </Spinner>}</div>
+                    <div className="col-10">
+                        <span>Be patient, I'm a bot not a magician! Loading... <br />
+                            It can take a while (I'm really busy)</span></div>
+                </div>
+
+            </ModalBody>
+        </Modal>
+    </>
     );
 };
 

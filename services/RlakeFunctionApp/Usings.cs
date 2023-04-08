@@ -1,0 +1,14 @@
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.Text;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Options;
+global using Microsoft.Extensions.Logging;
+global using System.Text.Json.Serialization;
+global using System.Text.Json;
+global using System;
+global using System.Threading.Tasks;
+global using System.Collections.Generic;
+global using Microsoft.Extensions.DependencyInjection;
+global using Rlake.Api.Data;
+global using Rlake.Api.Dto;

@@ -15,26 +15,24 @@ export class NswagClient {
 
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "http://localhost:7071/api";
     }
 
     /**
-     * Creates a new AI conversation.
-     * @param searchText (optional) 
-     * @return Success
+     * @return The OK response
      */
-    start(searchText: string | undefined): Promise<SearchResultDto> {
-        let url_ = this.baseUrl + "/api/chat/start?";
-        if (searchText === null)
-            throw new Error("The parameter 'searchText' cannot be null.");
-        else if (searchText !== undefined)
-            url_ += "searchText=" + encodeURIComponent("" + searchText) + "&";
+    start(searchQuery: string): Promise<SearchResultDto> {
+        let url_ = this.baseUrl + "/chat/search?";
+        if (searchQuery === undefined || searchQuery === null)
+            throw new Error("The parameter 'searchQuery' must be defined and cannot be null.");
+        else
+            url_ += "searchQuery=" + encodeURIComponent("" + searchQuery) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "POST",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "application/json"
             }
         };
 
@@ -62,26 +60,25 @@ export class NswagClient {
     }
 
     /**
-     * Get last conversations list.
-     * @return Success
+     * @return The OK response
      */
-    chatAll(): Promise<Conversation[]> {
-        let url_ = this.baseUrl + "/api/chat";
+    listConverstations(): Promise<Conversation[]> {
+        let url_ = this.baseUrl + "/chat";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "application/json"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processChatAll(_response);
+            return this.processListConverstations(_response);
         });
     }
 
-    protected processChatAll(response: Response): Promise<Conversation[]> {
+    protected processListConverstations(response: Response): Promise<Conversation[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -107,197 +104,21 @@ export class NswagClient {
     }
 
     /**
-     * Get conversation by id.
-     * @return Success
+     * @param body File to upload
+     * @return The OK response
      */
-    chatGET(id: string): Promise<Conversation> {
-        let url_ = this.baseUrl + "/api/chat/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    upload(body: Blob): Promise<string> {
+        let url_ = this.baseUrl + "/upload";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processChatGET(_response);
-        });
-    }
-
-    protected processChatGET(response: Response): Promise<Conversation> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Conversation.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Conversation>(null as any);
-    }
-
-    /**
-     * Posts new message to the conversation.
-     * @param body (optional) 
-     * @return Success
-     */
-    chatPOST(id: string, body: Post | undefined): Promise<Post> {
-        let url_ = this.baseUrl + "/api/chat/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
+        const content_ = body;
 
         let options_: RequestInit = {
             body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processChatPOST(_response);
-        });
-    }
-
-    protected processChatPOST(response: Response): Promise<Post> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Post.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Post>(null as any);
-    }
-
-    /**
-     * Get some points.
-     * @return Success
-     */
-    locationsAll(): Promise<Point[]> {
-        let url_ = this.baseUrl + "/api/locations";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processLocationsAll(_response);
-        });
-    }
-
-    protected processLocationsAll(response: Response): Promise<Point[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(Point.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Point[]>(null as any);
-    }
-
-    /**
-     * Get locations details by id.
-     * @return Success
-     */
-    locations(id: string): Promise<Point> {
-        let url_ = this.baseUrl + "/api/locations/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processLocations(_response);
-        });
-    }
-
-    protected processLocations(response: Response): Promise<Point> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Point.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Point>(null as any);
-    }
-
-    /**
-     * Uploads file to the blob.
-     * @param file (optional) 
-     * @return Success
-     */
-    upload(file: FileParameter | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/upload";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = new FormData();
-        if (file === null || file === undefined)
-            throw new Error("The parameter 'file' cannot be null.");
-        else
-            content_.append("file", file.data, file.fileName ? file.fileName : "file");
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
             }
         };
 
@@ -306,28 +127,31 @@ export class NswagClient {
         });
     }
 
-    protected processUpload(response: Response): Promise<void> {
+    protected processUpload(response: Response): Promise<string> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : _responseText;
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return result200;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<string>(null as any);
     }
 }
 
-/** Single AI Conversation */
 export class Conversation implements IConversation {
-    id!: string;
-    title?: string | undefined;
+    id?: string;
+    title?: string;
     createdAt?: Date;
-    posts?: Post[] | undefined;
+    posts?: Post[];
 
     constructor(data?: IConversation) {
         if (data) {
@@ -372,25 +196,62 @@ export class Conversation implements IConversation {
     }
 }
 
-/** Single AI Conversation */
 export interface IConversation {
-    id: string;
-    title?: string | undefined;
+    id?: string;
+    title?: string;
     createdAt?: Date;
-    posts?: Post[] | undefined;
+    posts?: Post[];
 }
 
-/** Geo point. Each Post can have few points. */
+export class MultiPartFormDataModel implements IMultiPartFormDataModel {
+    fileUpload?: string;
+    fileName?: string;
+
+    constructor(data?: IMultiPartFormDataModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fileUpload = _data["fileUpload"];
+            this.fileName = _data["fileName"];
+        }
+    }
+
+    static fromJS(data: any): MultiPartFormDataModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new MultiPartFormDataModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fileUpload"] = this.fileUpload;
+        data["fileName"] = this.fileName;
+        return data;
+    }
+}
+
+export interface IMultiPartFormDataModel {
+    fileUpload?: string;
+    fileName?: string;
+}
+
 export class Point implements IPoint {
-    id!: string;
-    title?: string | undefined;
+    id?: string;
+    title?: string;
     latitude?: number;
     longitude?: number;
-    reason?: string | undefined;
-    description?: string | undefined;
-    additionalInfo?: string | undefined;
+    reason?: string;
+    description?: string;
+    additionalInfo?: string;
     order?: number | undefined;
-    postId?: string;
 
     constructor(data?: IPoint) {
         if (data) {
@@ -411,7 +272,6 @@ export class Point implements IPoint {
             this.description = _data["description"];
             this.additionalInfo = _data["additionalInfo"];
             this.order = _data["order"];
-            this.postId = _data["postId"];
         }
     }
 
@@ -432,31 +292,26 @@ export class Point implements IPoint {
         data["description"] = this.description;
         data["additionalInfo"] = this.additionalInfo;
         data["order"] = this.order;
-        data["postId"] = this.postId;
         return data;
     }
 }
 
-/** Geo point. Each Post can have few points. */
 export interface IPoint {
-    id: string;
-    title?: string | undefined;
+    id?: string;
+    title?: string;
     latitude?: number;
     longitude?: number;
-    reason?: string | undefined;
-    description?: string | undefined;
-    additionalInfo?: string | undefined;
+    reason?: string;
+    description?: string;
+    additionalInfo?: string;
     order?: number | undefined;
-    postId?: string;
 }
 
-/** Conversation has many Posts */
 export class Post implements IPost {
-    id!: string;
-    text?: string | undefined;
+    id?: string;
+    text?: string;
     createdAt?: Date;
-    conversationId?: string;
-    points?: Point[] | undefined;
+    points?: Point[];
 
     constructor(data?: IPost) {
         if (data) {
@@ -472,7 +327,6 @@ export class Post implements IPost {
             this.id = _data["id"];
             this.text = _data["text"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
-            this.conversationId = _data["conversationId"];
             if (Array.isArray(_data["points"])) {
                 this.points = [] as any;
                 for (let item of _data["points"])
@@ -493,7 +347,6 @@ export class Post implements IPost {
         data["id"] = this.id;
         data["text"] = this.text;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
-        data["conversationId"] = this.conversationId;
         if (Array.isArray(this.points)) {
             data["points"] = [];
             for (let item of this.points)
@@ -503,19 +356,17 @@ export class Post implements IPost {
     }
 }
 
-/** Conversation has many Posts */
 export interface IPost {
-    id: string;
-    text?: string | undefined;
+    id?: string;
+    text?: string;
     createdAt?: Date;
-    conversationId?: string;
-    points?: Point[] | undefined;
+    points?: Point[];
 }
 
 export class SearchResultDto implements ISearchResultDto {
-    searchText?: string | undefined;
-    conversation!: Conversation;
-    items!: Point[];
+    searchText?: string;
+    conversation?: Conversation;
+    items?: Point[];
 
     constructor(data?: ISearchResultDto) {
         if (data) {
@@ -524,16 +375,12 @@ export class SearchResultDto implements ISearchResultDto {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.conversation = new Conversation();
-            this.items = [];
-        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.searchText = _data["searchText"];
-            this.conversation = _data["conversation"] ? Conversation.fromJS(_data["conversation"]) : new Conversation();
+            this.conversation = _data["conversation"] ? Conversation.fromJS(_data["conversation"]) : <any>undefined;
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -563,14 +410,9 @@ export class SearchResultDto implements ISearchResultDto {
 }
 
 export interface ISearchResultDto {
-    searchText?: string | undefined;
-    conversation: Conversation;
-    items: Point[];
-}
-
-export interface FileParameter {
-    data: any;
-    fileName: string;
+    searchText?: string;
+    conversation?: Conversation;
+    items?: Point[];
 }
 
 export class ApiException extends Error {

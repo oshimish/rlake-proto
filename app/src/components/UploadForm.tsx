@@ -17,10 +17,10 @@ const UploadForm: React.FC = () => {
 
         if (selectedFile) {
             try {
-                const response = await Api.upload({
-                    fileName: selectedFile.name,
-                    data: selectedFile,
-                });
+
+                const blob = new Blob([selectedFile], { type: selectedFile.type });
+
+                const response = await Api.upload(blob);
 
                 // updateState({
                 //     ...state,

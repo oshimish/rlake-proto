@@ -11,7 +11,7 @@ const FetchDataComponent: React.FC = () => {
         async function fetchData() {
             updateState({ error: null, loading: true });
             try {
-                const result = await Api.chatAll();
+                const result = await Api.listConverstations();
                 var conv = result[0];
                 updateState({
                     conversation: conv,
@@ -23,6 +23,8 @@ const FetchDataComponent: React.FC = () => {
             }
             updateState({ loading: false });
         }
+
+
 
         fetchData();
     }, []);
@@ -41,6 +43,7 @@ const FetchDataComponent: React.FC = () => {
 
             </ModalBody>
         </Modal>
+
     );
 };
 
