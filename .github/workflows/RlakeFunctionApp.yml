@@ -13,8 +13,7 @@ env:
   AZURE_APIM_SERVICENAME: RlakeApi
   AZURE_APIM_API_ID: RlakeFunctionApp
   AZURE_APIM_RESOURCE_PATH: /rlake
-  # check vars.AZURE_APIM_SWAGGERURL_FUNCAPP
-  #AZURE_APIM_SWAGGERURL: ''
+  AZURE_APIM_SWAGGERURL: ${{ vars.AZURE_APIM_SWAGGERURL_FUNCAPP }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,4 +54,4 @@ jobs:
         publish-profile: ${{ secrets.RlakeFunctionApp_C207 }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
     - name: Import API into Azure API Management
-      run: az apim api import --path "${{ env.AZURE_APIM_RESOURCE_PATH }}" --resource-group ${{ env.AZURE_APIM_RESOURCEGROUP }} --service-name ${{ env.AZURE_APIM_SERVICENAME }} --api-id ${{ env.AZURE_APIM_API_ID }} --specification-url "${{ vars.AZURE_APIM_SWAGGERURL_FUNCAPP }}" --specification-format OpenApi --subscription-required false
+      run: az apim api import --path "${{ env.AZURE_APIM_RESOURCE_PATH }}" --resource-group ${{ env.AZURE_APIM_RESOURCEGROUP }} --service-name ${{ env.AZURE_APIM_SERVICENAME }} --api-id ${{ env.AZURE_APIM_API_ID }} --specification-url "${{ env.AZURE_APIM_SWAGGERURL }}" --specification-format OpenApi --subscription-required false
