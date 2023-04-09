@@ -46,7 +46,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.RlakeApi_SPN }}
+        creds: ${{ secrets.RLAKEAPI_AZURE_CREDENTIALS }}
     - name: Deploy to Azure Function App
       uses: Azure/functions-action@v1
       with:
