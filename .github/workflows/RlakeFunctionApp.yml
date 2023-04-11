@@ -13,7 +13,7 @@ env:
   AZURE_APIM_SERVICENAME: RlakeApi
   AZURE_APIM_API_ID: RlakeFunctionApp
   AZURE_APIM_RESOURCE_PATH: /rlake
-  AZURE_APIM_SWAGGERURL: ''
+  AZURE_APIM_SWAGGERURL: ${{ vars.AZURE_APIM_SWAGGERURL_FUNCAPP }}
 jobs:
   build:
     runs-on: ubuntu-latest
