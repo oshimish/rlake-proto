@@ -1,6 +1,8 @@
-﻿namespace Rlake.Api.Dto
+﻿using RlakeFunctionApp.Entities;
+
+namespace RlakeFunctionApp.Contracts.Responses
 {
-    public class SearchResultDto
+    public class CreateConversationResponse
     {
         public string SearchText { get; set; } = "";
 

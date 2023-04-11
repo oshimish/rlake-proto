@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rlake.Api", "backend\Rlake.Api\Rlake.Api.csproj", "{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UploadFileService", "services\UploadFileService\UploadFileService.csproj", "{582AEC47-0B82-485F-8B49-679DE8A088E6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rlake.Tests", "backend\Rlake.Tests\Rlake.Tests.csproj", "{9F2B43A0-3118-4C47-B298-A82FA959495C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RlakeFunctionApp", "services\RlakeFunctionApp\RlakeFunctionApp.csproj", "{8CC8F8B2-80A5-4A1A-8EDD-9CD000FA5A69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RlakeFunctionApp", "services\RlakeFunctionApp\RlakeFunctionApp.csproj", "{8CC8F8B2-80A5-4A1A-8EDD-9CD000FA5A69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RlakeFunctionApp.Tests", "services\RlakeFunctionApp.Tests\RlakeFunctionApp.Tests.csproj", "{332BD1DC-51DB-4348-858C-F47AF7A128C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +21,6 @@ Global
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEDC7B39-BAFF-49BA-9486-A332632D0ABD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{582AEC47-0B82-485F-8B49-679DE8A088E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{582AEC47-0B82-485F-8B49-679DE8A088E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{582AEC47-0B82-485F-8B49-679DE8A088E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{582AEC47-0B82-485F-8B49-679DE8A088E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F2B43A0-3118-4C47-B298-A82FA959495C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F2B43A0-3118-4C47-B298-A82FA959495C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F2B43A0-3118-4C47-B298-A82FA959495C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{8CC8F8B2-80A5-4A1A-8EDD-9CD000FA5A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CC8F8B2-80A5-4A1A-8EDD-9CD000FA5A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CC8F8B2-80A5-4A1A-8EDD-9CD000FA5A69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{332BD1DC-51DB-4348-858C-F47AF7A128C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332BD1DC-51DB-4348-858C-F47AF7A128C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332BD1DC-51DB-4348-858C-F47AF7A128C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332BD1DC-51DB-4348-858C-F47AF7A128C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

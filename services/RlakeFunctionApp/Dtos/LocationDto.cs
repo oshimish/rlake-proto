@@ -1,6 +1,6 @@
-﻿
+﻿using RlakeFunctionApp.Entities;
 
-namespace Rlake.Api.Dto
+namespace RlakeFunctionApp.Dtos
 {
     public class LocationDto
     {
