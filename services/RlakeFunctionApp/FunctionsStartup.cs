@@ -1,4 +1,8 @@
-﻿using Microsoft.ApplicationInsights.Extensibility;
+﻿using Azure.Core;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using AzureAppConfigSampleFunction;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Configurations.AppSettings.Extensions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
@@ -23,17 +27,12 @@ using System.Net.Http;
 
 namespace RlakeFunctionApp
 {
-    public class Startup : FunctionsStartup
+    public class Startup : AzureAppConfigStartup
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var services = builder.Services;
-
-            var Configuration = new ConfigurationBuilder()
-                 .SetBasePath(Environment.CurrentDirectory)
-                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-                 .AddEnvironmentVariables()
-                 .Build();
+            var Configuration = builder.GetContext().Configuration;
 
             services.Configure<AzureStorageOptions>(Configuration.GetSection("AzureStorage"));
             services.Configure<ChatOptions>(Configuration.GetSection("Chat"));
@@ -42,11 +41,6 @@ namespace RlakeFunctionApp
             var cosmosDbSettings = new CosmosDbSettings();
             Configuration.Bind(CosmosDbSettings.CosmosDbSectionKey, cosmosDbSettings);
             builder.Services.AddSingleton(cosmosDbSettings);
-
-            //builder.Services.AddDbContext<ApiDbContext>(options =>
-            //{
-            //    options.UseCosmos(cosmosDbSettings.ConnectionString, cosmosDbSettings.DatabaseId);
-            //});
 
             builder.Services.AddSingleton<IOpenApiConfigurationOptions, OpenApiConfigurationOptions>();
 
@@ -65,11 +59,31 @@ namespace RlakeFunctionApp
 
             if (Debugger.IsAttached)
             {
-                services.Configure<TelemetryConfiguration>(x => x.DisableTelemetry = true);
+                services.PostConfigure<TelemetryConfiguration>(x => x.DisableTelemetry = true);
             }
         }
 
- 
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            var builtConfig = builder.ConfigurationBuilder.Build();
+            var keyVaultUrl = builtConfig["KeyVaultUrl"];
+            if (!string.IsNullOrEmpty(keyVaultUrl))
+            {
+                //var credential = new DefaultAzureCredential();
+                //builder.ConfigurationBuilder.AddAzureKeyVault(new Uri(keyVaultUrl), credential);
+            }
+
+            base.ConfigureAppConfiguration(builder);
+
+            //var Configuration = new ConfigurationBuilder()
+            //                 .AddConfiguration(builder.GetContext().Configuration)
+            //                 .SetBasePath(Environment.CurrentDirectory)
+            //                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+            //                 .AddEnvironmentVariables()
+            //                 .Build();
+            
+        }
+
         public class OpenApiConfigurationOptions : DefaultOpenApiConfigurationOptions
         {
             public OpenApiConfigurationOptions()

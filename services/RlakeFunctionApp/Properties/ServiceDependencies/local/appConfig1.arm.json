@@ -36,7 +36,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('rlake-keys', subscription().subscriptionId)))]",
+      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('rlake-config', subscription().subscriptionId)))]",
       "resourceGroup": "[parameters('resourceGroupName')]",
       "apiVersion": "2019-10-01",
       "dependsOn": [
@@ -49,24 +49,22 @@
           "contentVersion": "1.0.0.0",
           "resources": [
             {
-              "name": "rlake-keys",
-              "type": "Microsoft.KeyVault/vaults",
+              "type": "Microsoft.AppConfiguration/configurationStores",
               "location": "[parameters('resourceLocation')]",
-              "properties": {
-                "sku": {
-                  "family": "A",
-                  "name": "Standard"
-                },
-                "tenantId": "4e62bdc6-d0bf-4a99-88d5-2e13d73624da",
-                "accessPolicies": [],
-                "enabledForDeployment": false,
-                "enabledForDiskEncryption": false,
-                "enabledForTemplateDeployment": false,
-                "enableSoftDelete": true,
-                "softDeleteRetentionInDays": 90,
-                "enableRbacAuthorization": false
+              "properties": {},
+              "sku": {
+                "name": "free"
               },
-              "apiVersion": "2016-10-01"
+              "systemData": {
+                "createdBy": "oshimish@gmail.com",
+                "createdByType": "User",
+                "createdAt": "2023-04-12T16:01:33+04:00",
+                "lastModifiedBy": "oshimish@gmail.com",
+                "lastModifiedByType": "User",
+                "lastModifiedAt": "2023-04-14T13:32:41+04:00"
+              },
+              "name": "rlake-config",
+              "apiVersion": "2022-05-01"
             }
           ]
         }
@@ -74,6 +72,6 @@
     }
   ],
   "metadata": {
-    "_dependencyType": "secrets.keyVault"
+    "_dependencyType": "appConfig.azure"
   }
 }

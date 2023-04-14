@@ -4,13 +4,6 @@
       "type": "storage.emulator",
       "connectionId": "AzureWebJobsStorage"
     },
-    "secrets1": {
-      "secretStore": null,
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.KeyVault/vaults/rlake-keys",
-      "type": "secrets.keyVault",
-      "connectionId": "VaultUri",
-      "dynamicId": null
-    },
     "secrets2": {
       "type": "secrets.user"
     },
@@ -25,6 +18,19 @@
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.DocumentDB/databaseAccounts/rlake-cosmos",
       "type": "cosmosdb.azure",
       "connectionId": "CosmosDb:ConnectionString"
+    },
+    "secrets1": {
+      "secretStore": null,
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.KeyVault/vaults/rlake-keys",
+      "type": "secrets.keyVault",
+      "connectionId": "VaultUri",
+      "dynamicId": null
+    },
+    "appConfig1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.AppConfiguration/configurationStores/rlake-config",
+      "type": "appConfig.azure",
+      "connectionId": "AppConfig"
     }
   }
 }
