@@ -17,6 +17,7 @@ namespace AzureAppConfigSampleFunction
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
             var userSecretConfig = new ConfigurationBuilder();
+            userSecretConfig.AddEnvironmentVariables();
             userSecretConfig.AddUserSecrets(System.Reflection.Assembly.GetExecutingAssembly(), true);
             var azAppConfigConnection = userSecretConfig.Build()["AppConfig"];
 
