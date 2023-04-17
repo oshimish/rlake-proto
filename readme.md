@@ -1,6 +1,10 @@
-# ChatGPT API based Map
+# Serverless App Proto (ChatGPT API based Map)
 
 "Site to ask ChatGPT using API and show the resulting geo places on the Azure map"
+
+## Architecture
+
+![image](https://user-images.githubusercontent.com/2327035/232416326-b89852fe-52d2-4fe2-931a-7cf1404f8672.png)
 
 ## Description
 
@@ -21,7 +25,6 @@ The project is currently deployed at https://jolly-ocean-0da9e6d03.2.azurestatic
 - Display the latest queries
 - Allow routing between conversations and selected points
 - Display conversations, points, and markers on the map
-- Allow file upload to the Azure blob
 
 ## Routes
 
@@ -41,9 +44,6 @@ The following endpoints are available:
 | Chat      | GET    | /api/chat           | Get last conversations list.           |
 | Chat      | GET    | /api/chat/{id}      | Get conversation by id.                |
 | Chat      | POST   | /api/chat/{id}      | Posts new message to the conversation. |
-| Locations | GET    | /api/locations      | Get some points.                       |
-| Locations | GET    | /api/locations/{id} | Get locations details by id.           |
-| Upload    | POST   | /api/upload         | Uploads file to the blob.              |
 
 ## Queues
 
